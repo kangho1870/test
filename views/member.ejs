@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+    <title>Allcover</title>
+</head>
+<body>
+    
+    <script>
+        fetch('/protected')
+            .then(Response => {
+                if(Response.ok) {
+                    document.body.innerHTML = 
+                    `<h1>Allcover 회원정보</h1>
+                        <table>
+                            <tr>
+                                <th>No.</th>
+                                <th>이름</th>
+                                <th>나이</th>
+                                <th>에버</th>
+                            </tr>
+                            <% member.forEach((row) => { %>
+                            <tr>
+                                <td><%= row.memid %></td>
+                                <td><a href="/member/<%= row.memid %>"><%= row.memName %></a></td>
+                                <td><%= row.memAge %></td>
+                                <td><%= row.memAvg %></td>
+                            </tr>
+                            <% }); %>
+                        </table>
+                        <!-- 클라이언트가 전체회원 상세보기 버튼을 클릭하면 서버에 /member/all url로 get요청을 함 -->
+                        <form action="/member/all" method="get">
+                            <button type="submit">전체회원 상세보기</button>
+                        </form>`
+                }else {
+                    alert('로그인 필요');
+                    window.location.href ="/home"
+
+                }
+            });
+    </script>
+  </body>
+</html>

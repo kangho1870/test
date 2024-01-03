@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+  <title>Allcover</title>
+</head>
+  <script>
+    fetch('/protected')
+      .then(Response => {
+        if(Response.ok) {
+            document.body.innerHTML = 
+            `<body>
+                <h1>Allcover 회원 상세정보</h1>
+                <table>
+                  <tr>
+                    <th>No.</th>
+                    <th>이름</th>
+                    <th>전화번호</th>
+                    <th>평균점수</th>
+                    <th>나이</th>
+                    <th>최고기록 점수</th>
+                    <th>퍼펙트 횟수</th>
+            
+                  </tr>
+                  <% member.forEach((row) => { %>
+                    <tr>
+                        <td><%= row.memid %></td>
+                        <td><%= row.memName %></td>
+                        <td><%= row.memPhoneNumber %></td>
+                        <td><%= row.memAvg %></td>
+                        <td><%= row.memAge %></td>
+                        <td><%= row.memMaxScore %></td>
+                        <td><%= row.memPerfectCount %></td>
+                    </tr>
+                <% }); %>
+                </table>
+            </body>`
+        }else {
+            alert('로그인 필요');
+            window.location.href ="/home"
+        }
+    });
+  </script>
+</html>

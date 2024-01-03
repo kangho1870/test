@@ -1,0 +1,243 @@
+table, th, td {
+    text-align: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+body {
+    max-height: 600px;
+}
+td {
+    background-color: rgb(220, 232, 232);
+}
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    
+    /* 숨기기 */
+    z-index: -1;
+    opacity: 0;
+}
+.window {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+    background-color: #ffffff;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+    
+    /* 임시 지정 */
+    width: 30%;
+    height: 50%;
+
+    /* 초기에 약간 아래에 배치 */
+    transform: translate(-50%, -40%);
+}
+.show .popup {
+    transform: translate(-50%, -20%);
+    transition: all .5s;
+}
+.show {
+    opacity: 1;
+    z-index: 1000;
+    transition: all .5s;
+}
+
+
+.btn {
+    box-sizing: border-box;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid rgb(103, 100, 100);
+    border-radius: 0.6em;
+    color: rgb(12, 1, 1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1;
+    margin: 20px;
+    padding: 1.2em 2.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    width: 95%; /* 창의 너비에 따라 조정할 수 있습니다. */
+    max-width: 400px; /* 버튼의 최대 너비를 지정합니다. */
+    position: fixed;
+    top: 70%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+
+    &:hover,
+    &:focus {
+      color: #171616;
+      font-weight: bold;
+      outline: 0;
+    }
+}
+#submit {
+    transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+    &:hover {
+      box-shadow: 0 0 40px 40px rgb(176, 172, 172) inset;
+    }
+}
+.btn2 {
+    box-sizing: border-box;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid rgb(103, 100, 100);
+    border-radius: 0.6em;
+    color: rgb(12, 1, 1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 20px;
+    padding: 1.2em 2.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    width: 95%; /* 창의 너비에 따라 조정할 수 있습니다. */
+    max-width: 400px; /* 버튼의 최대 너비를 지정합니다. */
+    position: fixed;
+    top: 84%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+
+    &:hover,
+    &:focus {
+      color: #171616;
+      font-weight: bold;
+      outline: 0;
+    }
+}
+#close {
+    transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+    &:hover {
+      box-shadow: 0 0 40px 40px rgb(176, 172, 172) inset;
+    }
+}
+.btn3 {
+    box-sizing: border-box;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid rgb(103, 100, 100);
+    border-radius: 0.6em;
+    color: rgb(12, 1, 1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 20px;
+    padding: 1.2em 2.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    width: 95%; /* 창의 너비에 따라 조정할 수 있습니다. */
+    max-width: 400px; /* 버튼의 최대 너비를 지정합니다. */
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+
+    &:hover,
+    &:focus {
+      color: #171616;
+      font-weight: bold;
+      outline: 0;
+    }
+}
+#show {
+    transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
+    &:hover {
+      box-shadow: 0 0 40px 40px rgb(176, 172, 172) inset;
+    }
+}
+.contact_form {text-align: center; margin: 0 auto; width: 90%; padding: 0.5em 0.8em;}
+.contact_form > div {position: relative; width: 100%;}
+.contact_form > div input {width: 100%; height: 42px; margin: 10px 0; border: 0.3px solid #848082; box-sizing: border-box; border-radius: 5px; padding: 0 1.4em; outline: none !important;}
+.contact_form > div label {position: absolute; top: -1.8em; left: 0; margin: 1.9em 2em 2em 1em; background-color: white; padding: 0 8px;  color: #030303;}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: gold;
+    color: black;
+    border-radius: 50%;
+}
+.table-center {
+    width: 850px; /* 너비 설정 */
+    height: 600px; /* 높이 설정 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+.nav-title {
+    text-align: center;
+}
+@media (max-width: 600px) {
+    body {
+        font-size: 5px;
+    }
+    .table-center {
+        width: 100%;
+        height: 3%;
+        top: unset;
+        left: 0;
+        transform: none;
+        overflow-x: scroll;
+        margin-bottom: 10px;
+        position: relative;
+        text-align: center;
+    }
+    .btn3 {
+        position: absolute;
+        bottom: unset;
+        margin-left: 0%;
+    }
+    .nav-title {
+        text-align: center;
+        font-size: 10px;
+    }
+    .popup {
+        width: 80%;
+        height: 52%;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+@media (min-width: 601px) {
+    /* 데스크톱 화면에 대한 스타일 지정 */
+    body {
+        font-size: 16px;
+    }
+}

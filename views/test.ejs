@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+    <title>Allcover</title>
+</head>
+<body>
+    <div class="nav-title">
+        <h1><%= gameName %></h1>
+    </div>
+    <div class="table-center" style="overflow-x: auto; overflow-y: auto;">
+            <table class="user-table">
+                <tr>
+                    <th>순 위</th>
+                    <th>이 름</th>
+                    <th>에 버</th>
+                    <th class="origin_game">1Game</th>
+                    <th>1G(+/-)</th>
+                    <th class="origin_game">2Game</th>
+                    <th>2G(+/-)</th>
+                    <th class="origin_game">3Game</th>
+                    <th>3G(+/-)</th>
+                    <th class="origin_game">4Game</th>
+                    <th>4G(+/-)</th>
+                    <th>총 핀</th>
+                    <th>평 균</th>
+                    <th>최고점수</th>
+                    <th>최저점수</th>
+                </tr>
+                <% results.forEach((row, index) => { %>
+                <tr class="<%= row.userName %>" id="<%= row.userName %>" value="<%= row.userName %>">
+                    <td><%= index + 1 %></td>
+                    <td><%= row.userName %></td>
+                    <td><%= row.userAvg %></td>
+                    <td class="game-cell"><%= row['1Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['1Game_P_M'] %></td>
+                    <td class="game-cell"><%= row['2Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['2Game_P_M'] %></td>
+                    <td class="game-cell"><%= row['3Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['3Game_P_M'] %></td>
+                    <td class="game-cell"><%= row['4Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['4Game_P_M'] %></td>
+                    <td class="total"><%= row.userTotal %></td>
+                    <td class="userThisAvg"><%= row.userThisAvg %></td>
+                    <td><%= row.userHigh %></td>
+                    <td><%= row.userLow %></td>
+                </tr>
+                <% }); %>
+            </table>
+        </div>
+            <button id="show" class="btn3">점수 입력</button>
+            <div class="background">
+                <div class="window">
+                    <div class="popup">
+                        
+                        <form method="post" action="/saveDb" id="input-score" onsubmit="return validateScores()">
+                            <div class="contact_form">
+                                <div>
+                                    <input id="contact_name" value="" name="Game1" type="text" placeholder="ex) 200">
+                                    <label for="contact_name">1Game</label>
+                                </div>
+                            </div>
+                            <div class="contact_form">
+                                <div>
+                                    <input id="contact_name" value="" name="Game2" type="text" placeholder="ex) 200">
+                                    <label for="contact_name">2Game</label>
+                                </div>
+                            </div>
+                            <div class="contact_form">
+                                <div>
+                                    <input id="contact_name" value="" name="Game3" type="text" placeholder="ex) 200">
+                                    <label for="contact_name">3Game</label>
+                                </div>
+                            </div>
+                            <div class="contact_form">
+                                <div>
+                                    <input id="contact_name" value="" name="Game4" type="text" placeholder="ex) 200">
+                                    <label for="contact_name">4Game</label>
+                                </div>
+                            </div>
+                            <p>
+                                <td><input type="submit" value="점수 입력" id="submit" class="btn"></td> 
+                            </p>
+                            <p>
+                                <button id="close" class="btn2">닫기</button>
+                            </p>
+                            
+                            <% userName.forEach((row, index) => { %>
+                            <input type="hidden" name="sessionName" value="<%= row.userName %>">
+                            <input type="hidden" name="sessionAvg" value="<%= row.userAvg %>">
+                            <input type="hidden" name="db1Game" value="<%= row['1Game'] %>">
+                            <input type="hidden" name="db2Game" value="<%= row['2Game'] %>">
+                            <input type="hidden" name="db3Game" value="<%= row['3Game'] %>">
+                            <input type="hidden" name="db4Game" value="<%= row['4Game'] %>">
+                            <input type="hidden" name="gameName" value="<%= gameName %>">
+                            <% }); %>
+                        </form>
+                    </div>
+                <div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        
+            
+        <script>
+            const gameCells = document.querySelectorAll('.game-cell');
+            const totalCells = document.querySelectorAll('.total');
+            const gamePMCells = document.querySelectorAll('.game_P_M-cell');
+            const userThisAvg = document.querySelectorAll('.userThisAvg')
+            const origin_game = document.querySelectorAll('.origin_game');
+            origin_game.forEach(cell => {
+                cell.style.backgroundColor = 'rgb(226, 220, 220)';
+            })
+            gameCells.forEach(cell => {
+            const score = parseInt(cell.textContent);
+                if(score === 300) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge';
+                    badge.textContent = '!';
+                    badge.style.color = 'gold';
+                    badge.style.fontWeight = 'bold';
+                    cell.style.color = 'green'; 
+                    cell.style.fontWeight = 'bold';
+                    
+                }else if(score >= 200) {
+                    cell.style.color = 'red'; 
+                    cell.style.fontWeight = 'bold';
+                }
+                cell.style.backgroundColor = 'rgb(226, 220, 220)';
+            });
+            
+            totalCells.forEach(cell => {
+                const score = parseInt(cell.textContent);
+                if(score >= 800) {
+                    cell.style.color = 'red'; 
+                    cell.style.fontWeight = 'bold';
+                }
+            });
+            gamePMCells.forEach(cell => {
+                const score = parseInt(cell.textContent);
+                if (score >= 1) {
+                    cell.style.color = 'red'; 
+                    cell.textContent = `+${score}`
+                }else if (score < 0) {
+                    cell.style.color = 'blue'; 
+                }
+            })
+            userThisAvg.forEach(cell => {
+                const score = cell.textContent;
+                if (score < 0) {
+                    cell.style.color = 'blue'; 
+                    cell.style.fontWeight = 'bold';
+                    
+                }else if (score >= 200) {
+                    cell.style.color = 'red'; 
+                    cell.style.fontWeight = 'bold';
+                    cell.textContent = `${score}`
+                }
+            })
+            var loginName = document.getElementsByName('sessionName')[0].value
+            localStorage.setItem('userName', loginName)
+            if (localStorage.getItem('userName') == loginName) {
+                const tableRows = document.querySelectorAll('tr');
+                tableRows.forEach(row => {
+                    if (row.id === loginName) {
+                    row.style.border = '2px solid red';
+                    }
+                });
+            }
+
+            function validateScores() {
+                var game1 = parseInt(document.getElementsByName('Game1')[0].value);
+                var game2 = parseInt(document.getElementsByName('Game2')[0].value);
+                var game3 = parseInt(document.getElementsByName('Game3')[0].value);
+                var game4 = parseInt(document.getElementsByName('Game4')[0].value);
+                
+                if (game1 === 0 && game2 === 0 && game3 === 0 && game4 === 0) {
+                    alert('점수를 입력하세요.');
+                    return false; // 폼 제출을 막음
+                }
+                
+                return true; // 폼 제출을 허용
+            }
+            function show() {
+                document.querySelector(".background").className = "background show";
+            }
+
+            function close() {
+                document.querySelector(".background").className = "background";
+            }
+
+            document.querySelector("#show").addEventListener("click", show);
+            document.querySelector("#close").addEventListener("click", close);
+
+            function preventBack() {
+                window.history.forward();
+            }
+
+            window.onload = function() {
+                preventBack();
+                    window.onpageshow = function(event) {
+                        if (event.persisted) {
+                            preventBack();
+                        }
+                };
+            };
+            
+        </script>
+</body>
+</html>

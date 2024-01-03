@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/home.css">
+    <title>Allcover</title>
+</head>
+<body>
+        <div class="login-wrapper">
+            <h2>Login</h2>
+            <form method="post" action="/login" id="login-form">
+                <input type="text" name="userName" placeholder="Name">
+                <input type="password" name="userPassword" placeholder="Password">
+                <label for="remember-check">
+                    <input type="checkbox" id="remember-check">아이디 저장하기
+                </label>
+                <input type="submit" value="Login" onclick="saveLocal()">
+            </form>
+        </div>
+        <script>
+            function saveLocal() {
+                var userName = document.getElementsByName('userName')[0].value;
+                
+                results.forEach(row => {
+                    if(row.memName == userName) {
+                        if(localStorage.length == 0) {
+                            sessionStorage.setItem("loggedName", userName);
+                        }else {
+                            sessionStorage.clear
+                            sessionStorage.setItem("loggedName", userName);
+                        }
+                    }
+                    document.getElementById('login-form').submit();
+                });
+            }
+        </script>
+</body>
+</html>

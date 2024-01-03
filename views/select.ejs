@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+    <button onclick="sendGetMember()">회원 정보 조회</button>
+    </p>
+    <p>
+    <button onclick="sendGetScorebord()">점수판</button>
+    </p>
+    <p>
+    <button onclick="sendGetMember()">회원 정보 조회</button>
+    </p>
+    <script>
+        function sendGetMember() {
+            window.location.href = "/member";
+            };
+            
+        function sendGetScorebord() {
+            window.location.href = "/test";
+        }
+    </script>
+</body>
+</html>
