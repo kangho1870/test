@@ -229,7 +229,7 @@ td {
     }
     .popup {
         width: 80%;
-        height: 52%;
+        height: 425px;
         top: 20%;
         left: 50%;
         transform: translate(-50%, -50%);

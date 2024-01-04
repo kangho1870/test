@@ -58,25 +58,25 @@
                         <form method="post" action="/saveDb" id="input-score" onsubmit="return validateScores()">
                             <div class="contact_form">
                                 <div>
-                                    <input id="contact_name" value="" name="Game1" type="text" placeholder="ex) 200">
+                                    <input id="contact_name" value="" name="Game1" type="text" placeholder="ex) 200" max="300">
                                     <label for="contact_name">1Game</label>
                                 </div>
                             </div>
                             <div class="contact_form">
                                 <div>
-                                    <input id="contact_name" value="" name="Game2" type="text" placeholder="ex) 200">
+                                    <input id="contact_name" value="" name="Game2" type="text" placeholder="ex) 200" max="300">
                                     <label for="contact_name">2Game</label>
                                 </div>
                             </div>
                             <div class="contact_form">
                                 <div>
-                                    <input id="contact_name" value="" name="Game3" type="text" placeholder="ex) 200">
+                                    <input id="contact_name" value="" name="Game3" type="text" placeholder="ex) 200" max="300">
                                     <label for="contact_name">3Game</label>
                                 </div>
                             </div>
                             <div class="contact_form">
                                 <div>
-                                    <input id="contact_name" value="" name="Game4" type="text" placeholder="ex) 200">
+                                    <input id="contact_name" value="" name="Game4" type="text" placeholder="ex) 200" max="300">
                                     <label for="contact_name">4Game</label>
                                 </div>
                             </div>
@@ -208,6 +208,20 @@
                 };
             };
             
+            document.getElementById("input-score").addEventListener("submit", function(event) {
+                var game1Value = document.getElementsByName("Game1")[0].value;
+                var game2Value = document.getElementsByName("Game2")[0].value;
+                var game3Value = document.getElementsByName("Game3")[0].value;
+                var game4Value = document.getElementsByName("Game4")[0].value;
+
+            if (isNaN(game1Value) || isNaN(game2Value) || isNaN(game3Value) || isNaN(game4Value)) {
+                alert("숫자를 입력해주세요.");
+                event.preventDefault();
+            } else if (game1Value > 300 || game2Value > 300 || game3Value > 300 || game4Value > 300) {
+                alert("입력값은 300 이하여야 합니다.");
+                event.preventDefault();
+            }
+            });
         </script>
 </body>
 </html>
