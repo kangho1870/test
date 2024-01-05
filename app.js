@@ -21,7 +21,7 @@ http.listen(3000, () => {
     console.log('서버가 3000번 포트에서 실행 중입니다.');
 });
 
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const { error, log } = require('console');
 const { Socket } = require('socket.io');
 
