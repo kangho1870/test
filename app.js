@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 // Express는 정적인 파일은 직접 포워딩 해줘야 함
 // Express는 파일을 찾으라고 하면 기본적으로 public 폴더로 포워딩 해주기 때문에
-// 파일 경로에는 public을 생량해야 함
+// 파일 경로에는 public을 생략해야 함
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -253,8 +253,14 @@ app.post('/saveDb', (req, res) => {
             connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
               if (error) {
                 throw error;
-              } else {
-                res.render('test', { userName: result, results: results, gameName: gameName });
+              }else {
+                connection.query(`select * from team_scoreboard`, (error, result3)=>{
+                  if(error){
+                    throw error
+                  }else {
+                    res.render('test', { userName: result, results: results, gameName: gameName, team: result3});
+                  }
+                })
               }
             });
           }
@@ -274,8 +280,14 @@ app.post('/saveDb', (req, res) => {
             connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
               if (error) {
                 throw error;
-              } else {
-                res.render('test', { userName: result, results: results, gameName: gameName });
+              }else {
+                connection.query(`select * from team_scoreboard`, (error, result3)=>{
+                  if(error){
+                    throw error
+                  }else {
+                    res.render('test', { userName: result, results: results, gameName: gameName, team: result3});
+                  }
+                })
               }
             });
           }
@@ -295,8 +307,14 @@ app.post('/saveDb', (req, res) => {
             connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
               if (error) {
                 throw error;
-              } else {
-                res.render('test', { userName: result, results: results, gameName: gameName });
+              }else {
+                connection.query(`select * from team_scoreboard`, (error, result3)=>{
+                  if(error){
+                    throw error
+                  }else {
+                    res.render('test', { userName: result, results: results, gameName: gameName, team: result3});
+                  }
+                })
               }
             });
           }
@@ -316,8 +334,14 @@ app.post('/saveDb', (req, res) => {
             connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
               if (error) {
                 throw error;
-              } else {
-                res.render('test', { userName: result, results: results, gameName: gameName });
+              } else{
+                connection.query(`select * from team_scoreboard`, (error, result3)=>{
+                  if(error){
+                    throw error
+                  }else {
+                    res.render('test', { userName: result, results: results, gameName: gameName, team: result3});
+                  }
+                })
               }
             });
           }
@@ -333,7 +357,13 @@ app.post('/saveDb', (req, res) => {
           if (error) {
             throw error;
           } else {
-            res.render('test', { userName: result, results: results, gameName: gameName });
+            connection.query(`select * from team_scoreboard`, (error, result3)=>{
+              if(error){
+                throw error
+              }else {
+                res.render('test', { userName: result, results: results, gameName: gameName, team: result3});
+              }
+            })
           }
         });
       }
@@ -363,7 +393,7 @@ app.post('/login', (req, res) => {
               }
               const filteredTables = results.filter((row) => {
                 const tableName = row[`Tables_in_allcover`]; // 테이블 이름 추출
-                return tableName !== 'member' && tableName !== 'scorebord'; // member와 scoreboard 테이블 제외
+                return tableName !== 'member' && tableName !== 'scorebord' && tableName !== 'team_scoreboard1' && tableName !== 'team_scoreboard2' && tableName !== 'team_scoreboard3' && tableName !== 'team_scoreboard4' && tableName !== 'team_scoreboard5' && tableName !== 'team_scoreboard6' && tableName !== 'team_scoreboard7' && tableName !== 'team_scoreboard8'; // member와 scoreboard 테이블 제외
               });
 
               res.render('gameselect', { results: results, result: result, filteredTables: filteredTables });
@@ -395,7 +425,6 @@ app.post('/createGame', (req, res) => {
     if (results.length > 0) {
       console.log('이미 존재하는 게임입니다.');
       res.status(400).send(`<script>alert('이미 존재하는 게임입니다.')</script>`);
-      
       return;
     } else {
       const createTableQuery = `CREATE TABLE ${gameName} (userName varchar(5), userAvg int, 1Game int, 1Game_P_M varchar(20), 2Game int, 2Game_P_M varchar(20), 3Game int, 3Game_P_M varchar(20), 4Game int, 4Game_P_M varchar(20), userThisAvg float, userTotal int, userHigh int, userLow int)`;
@@ -416,18 +445,72 @@ app.post('/createGame', (req, res) => {
           console.log('테이블이 성공적으로 생성되었습니다.');
           console.log('사용자가 성공적으로 추가되었습니다.');
           connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${memName}'`, (error, result) => {
-            if(error) {
-              throw error
+            if (error) {
+              throw error;
             } else {
               connection.query(`SELECT * FROM ${gameName}`, (error, results) => {
-                if(error){
-                  throw error
+                if (error) {
+                  throw error;
                 } else {
-                  res.render('test', {userName: result, result: result, results: results, gameName: gameName})
+                  connection.query(`select * from team_scoreboard1`, (error, team1) => {
+                    if (error) {
+                      throw error;
+                    } else {
+                      connection.query(`select * from team_scoreboard2`, (error, team2) => {
+                        if (error) {
+                          throw error;
+                        } else {
+                          connection.query(`select * from team_scoreboard3`, (error, team3) => {
+                            if (error) {
+                              throw error;
+                            } else {
+                              connection.query(`select * from team_scoreboard4`, (error, team4) => {
+                                if (error) {
+                                  throw error;
+                                } else {
+                                  connection.query(`select * from team_scoreboard5`, (error, team5) => {
+                                    if (error) {
+                                      throw error;
+                                    } else {
+                                      connection.query(`select * from team_scoreboard6`, (error, team6) => {
+                                        if (error) {
+                                          throw error;
+                                        } else {
+                                          connection.query(`select * from team_scoreboard7`, (error, team7) => {
+                                            if (error) {
+                                              throw error;
+                                            } else {
+                                              res.render('test', {
+                                                userName: result,
+                                                result: result,
+                                                results: results,
+                                                gameName: gameName,
+                                                team1: team1,
+                                                team2: team2,
+                                                team3: team3,
+                                                team4: team4,
+                                                team5: team5,
+                                                team6: team6,
+                                                team7: team7
+                                              });
+                                            }
+                                          });
+                                        }
+                                      });
+                                    }
+                                  });
+                                }
+                              });
+                            }
+                          });
+                        }
+                      });
+                    }
+                  });
                 }
-              })
+              });
             }
-          })
+          });
         });
       });
     }
@@ -449,11 +532,52 @@ app.post('/joinGame', (req, res) =>{
       if(error) {
         throw error;
       }else {
-        connection.query(`SELECT * FROM ${gameName}`, (error, results) => {
+        connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
           if(error){
             throw error;
           }else {
-            res.render('test', {userName: result, result: result, results: results, gameName: gameName});
+            connection.query(`select * from team_scoreboard1`, (error, team1) =>{
+              if(error){
+                throw error
+              }else {
+                connection.query(`select * from team_scoreboard2`, (error, team2) =>{
+                  if(error){
+                    throw error
+                  }else {
+                    connection.query(`select * from team_scoreboard3`, (error, team3) =>{
+                      if(error){
+                        throw error
+                      }else {
+                        connection.query(`select * from team_scoreboard4`, (error, team4) =>{
+                          if(error){
+                            throw error
+                          }else {
+                            connection.query(`select * from team_scoreboard5`, (error, team5) =>{
+                              if(error){
+                                throw error
+                              }else {
+                                connection.query(`select * from team_scoreboard6`, (error, team6) =>{
+                                  if(error){
+                                    throw error
+                                  }else {
+                                    connection.query(`select * from team_scoreboard7`, (error, team7) =>{
+                                      if(error){
+                                        throw error
+                                      }else {
+                                        res.render('test', {userName: result, result: result, results: results, gameName: gameName, team1: team1, team2: team2, team3: team3, team4: team4, team5: team5, team6: team6, team7: team7});}
+                                    })
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
+                      }
+                    })
+                  }
+                })
+              }
+            })
           }
         });
       }
@@ -468,15 +592,57 @@ app.post('/joinGame', (req, res) =>{
     if(error) {
       throw error
     }else {
-      connection.query(`select * from ${gameName}`, (error, results) => {
+      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
         if(error){
           throw error
         }else {
-          res.render('test', {userName: result, result: result, results: results, gameName: gameName})
+          connection.query(`select * from team_scoreboard1`, (error, team1) =>{
+            if(error){
+              throw error
+            }else {
+              connection.query(`select * from team_scoreboard2`, (error, team2) =>{
+                if(error){
+                  throw error
+                }else {
+                  connection.query(`select * from team_scoreboard3`, (error, team3) =>{
+                    if(error){
+                      throw error
+                    }else {
+                      connection.query(`select * from team_scoreboard4`, (error, team4) =>{
+                        if(error){
+                          throw error
+                        }else {
+                          connection.query(`select * from team_scoreboard5`, (error, team5) =>{
+                            if(error){
+                              throw error
+                            }else {
+                              connection.query(`select * from team_scoreboard6`, (error, team6) =>{
+                                if(error){
+                                  throw error
+                                }else {
+                                  connection.query(`select * from team_scoreboard7`, (error, team7) =>{
+                                    if(error){
+                                      throw error
+                                    }else {
+                                      res.render('test', {userName: result, result: result, results: results, gameName: gameName, team1: team1, team2: team2, team3: team3, team4: team4, team5: team5, team6: team6, team7: team7});}
+                                  })
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
         }
       });
     }
   });
 }
-});
+})
+
 });

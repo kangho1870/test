@@ -2,32 +2,11 @@
 <html>
   <head>
     <title>실시간 게임방</title>
-    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="/stylesheets/selectgame" type='text/css'>
   </head>
   <body>
-    <div>
-      <!-- 참가 버튼을 누르면 서버에 로그인한 유저의 이름과, 에버를 post -->
-      <!-- <form action="/joinGame" method="post" id="joinForm">
-        참가할 게임 이름<input type="text" name="joinGame">
-        <% result.forEach((row, index) => { %>
-        <input type="hidden" value="<%= row.memName %>" name="memName">
-        <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
-        <% }); %>
-        <input type="submit" value="참가">
-      </form> -->
-    </div>
-    <form action="/createGame" method="post">
-      <div>
-        게임 이름<input type="text" name="gameName" placeholder="올커버 xx회 정기모임">
-        <% result.forEach((row, index) => { %>
-          <input type="hidden" name="userName" value="<%= row.memName %>" >
-          <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
-          <% }); %>
-          <input type="submit" value="생성">
-      </div>
-    </form>
-    <div>
+    <div id="game-table">
       <table>
         <tr>
           <th>No.</th>
@@ -51,7 +30,16 @@
         </tr>
         <% }); %>
       </table>
-      
+      <form action="/createGame" method="post">
+      <div id="createGame">
+        게임 이름<input type="text" name="gameName" placeholder="올커버 xx회 정기모임">
+        <% result.forEach((row, index) => { %>
+          <input type="hidden" name="userName" value="<%= row.memName %>" >
+          <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+          <% }); %>
+          <input type="submit" value="생성">
+      </div>
+    </form>
       <script>
         const gameButtons = document.querySelectorAll('.game-button');
         const joinForm = document.getElementById('joinForm');

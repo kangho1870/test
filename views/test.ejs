@@ -10,9 +10,299 @@
     <div class="nav-title">
         <h1><%= gameName %></h1>
     </div>
+    <div class="scoreboardSection">
+        <li>
+            <button class="section-btn" id="userScore">개인 점수표</button>
+           <button class="section-btn" id="teamScore">팀 점수표</button>
+           <button class="section-btn" id="Ceremony">시상 표 </button>       
+        </li>
+    </div>
+    <div class="teamScore" style="display: none;">
+        <table id="team1">
+            <tr class="team-tr">
+                <th rowspan="8">Team 1</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team1.forEach((row)=>{ %>
+                <th><%= row.userName %></td>
+                <th><%= row.userAvg %></td>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+            </tfoot>
+        </table>
+        <table id="team2">
+            <tr class="team-tr">
+                <th rowspan="8">Team 2</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team2.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+        <table id="team3">
+            <tr class="team-tr">
+                <th rowspan="8">Team 3</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team3.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+        <table id="team4">
+            <tr class="team-tr">
+                <th rowspan="8">Team 4</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team4.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+        <table id="team5">
+            <tr class="team-tr">
+                <th rowspan="8">Team 5</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team5.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+        <table id="team6">
+            <tr class="team-tr">
+                <th rowspan="8">Team 6</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team6.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+        <table id="team7">
+            <tr class="team-tr">
+                <th rowspan="8">Team 7</th>
+                <th>이름</th>
+                <th>에버</th>
+                <th>1Game</th>
+                <th>(+/-)</th>
+                <th>2Game</th>
+                <th>(+/-)</th>
+                <th>3Game</th>
+                <th>(+/-)</th>
+                <th>4Game</th>
+                <th>(+/-)</th>
+            </tr>
+            <% team7.forEach((row)=>{ %>
+                <th><%= row.userName %></th>
+                <th><%= row.userAvg %></th>
+                <th class="game1"></th>
+                <th class="game1_P_M"></th>
+                <th class="game2"></th>
+                <th class="game2_P_M"></th>
+                <th class="game3"></th>
+                <th class="game3_P_M"></th>
+                <th class="game4"></th>
+                <th class="game4_P_M"></th>
+            <% }) %>
+            <tfoot>
+                <tr>
+                    <th>합계</th>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                </tr>
+        </table>
+    </div>
     <div class="table-center" style="overflow-x: auto; overflow-y: auto;">
             <table class="user-table">
-                <tr>
+                <tr class="main-tr">
                     <th>순 위</th>
                     <th>이 름</th>
                     <th>에 버</th>
@@ -50,6 +340,7 @@
                 <% }); %>
             </table>
         </div>
+        
             <button id="show" class="btn3">점수 입력</button>
             <div class="background">
                 <div class="window">
@@ -215,12 +506,51 @@
                 var game4Value = document.getElementsByName("Game4")[0].value;
 
             if (isNaN(game1Value) || isNaN(game2Value) || isNaN(game3Value) || isNaN(game4Value)) {
-                alert("숫자를 입력해주세요.");
+                alert("숫자만 입력 가능합니다.");
                 event.preventDefault();
             } else if (game1Value > 300 || game2Value > 300 || game3Value > 300 || game4Value > 300) {
-                alert("입력값은 300 이하여야 합니다.");
+                alert("점수는 300점을 초과할 수 없습니다.");
                 event.preventDefault();
             }
+            });
+            window.onload = function() {
+            userScoreBtn.style.backgroundColor = "gray";
+            teamScoreBtn.style.backgroundColor = "transparent";
+            ceremonyBtn.style.backgroundColor = "transparent";
+            userTable.style.display = "block";
+            teamScoreTable.style.display = "none";
+        };
+            const userScoreBtn = document.getElementById("userScore");
+            const teamScoreBtn = document.getElementById("teamScore");
+            const ceremonyBtn = document.getElementById("Ceremony");
+            const userTable = document.querySelector(".user-table");
+            const teamScoreTable = document.querySelector(".teamScore");
+
+            userScoreBtn.addEventListener("click", function() {
+                userTable.style.display = "block";
+                teamScoreTable.style.display = "none";
+
+                userScoreBtn.style.backgroundColor = "gray";
+                teamScoreBtn.style.backgroundColor = "transparent";
+                ceremonyBtn.style.backgroundColor = "transparent";
+            });
+
+            teamScoreBtn.addEventListener("click", function() {
+                userTable.style.display = "none";
+                teamScoreTable.style.display = "block";
+
+                userScoreBtn.style.backgroundColor = "transparent";
+                teamScoreBtn.style.backgroundColor = "gray";
+                ceremonyBtn.style.backgroundColor = "transparent";
+            });
+
+            ceremonyBtn.addEventListener("click", function() {
+                userTable.style.display = "none";
+                teamScoreTable.style.display = "none";
+
+                userScoreBtn.style.backgroundColor = "transparent";
+                teamScoreBtn.style.backgroundColor = "transparent";
+                ceremonyBtn.style.backgroundColor = "gray";
             });
         </script>
 </body>

@@ -1,0 +1,11 @@
+#game-table {
+    width: 300px;
+    height: 100px;
+    display: flex;
+    flex-direction: row;
+    border: 3px solid black;
+}
+.game-button {
+    flex: 1 0 auto;
+    border: 3px solid gray;
+}
