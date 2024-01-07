@@ -2,44 +2,51 @@
 <html>
   <head>
     <title>실시간 게임방</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js" integrity="sha512-zoJXRvW2gC8Z0Xo3lBbao5+AS3g6YWr5ztKqaicua11xHo+AvE1b0lT9ODgrHTmNUxeCw0Ry4BGRYZfXu70weg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="/stylesheets/selectgame" type='text/css'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
   </head>
   <body>
-    <div id="game-table">
-      <table>
-        <tr>
-          <th>No.</th>
-          <th>게임 이름</th>
-        </tr>
-        <% filteredTables.forEach((rows, indexs) => { %>
-        <tr>
-          <form action="/joinGame" method="post" id="joinForm">
-            <th><%= indexs + 1 %></th>
-            <th>
-              <button type="submit" class="game-button" data-table-name="<%= rows.Tables_in_allcover %>">
-                <%= rows.Tables_in_allcover %>
-              </button>
-            </th>
-            <input type="hidden" value="<%= rows.Tables_in_allcover %>" name="joinGame">
-            <% result.forEach((row, index) => { %>
-            <input type="hidden" value="<%= row.memName %>" name="memName">
-            <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
-            <% }) %>
-          </form>
-        </tr>
-        <% }); %>
-      </table>
-      <form action="/createGame" method="post">
-      <div id="createGame">
-        게임 이름<input type="text" name="gameName" placeholder="올커버 xx회 정기모임">
-        <% result.forEach((row, index) => { %>
-          <input type="hidden" name="userName" value="<%= row.memName %>" >
-          <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+    <div class="container">
+      <div class="game-table">
+        <div class="title">진행중인 게임</div>
+          <% filteredTables.forEach((rows, indexs) => { %>
+            <form action="/joinGame" method="post" id="joinForm">
+                <button type="submit" class="game-btn" data-table-name="<%= rows.Tables_in_allcover %>">
+                  <span><%= rows.Tables_in_allcover %></span>
+                </button>
+                <div class="layout"></div>
+              <input type="hidden" value="<%= rows.Tables_in_allcover %>" name="joinGame">
+              <% result.forEach((row, index) => { %>
+              <input type="hidden" value="<%= row.memName %>" name="memName">
+              <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
+              <% }) %>
+            </form>
           <% }); %>
-          <input type="submit" value="생성">
       </div>
-    </form>
+      <div class="createGame">
+        <div class="title">게임 생성</div>
+        <form action="/createGame" method="post">
+          <input type="text" name="gameName" class="gameName" placeholder="Game Name">
+          
+          <% result.forEach((row, index) => { %>
+            <input type="hidden" name="userName" value="<%= row.memName %>" >
+            <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+            <% }); %>
+            <p>
+            <input type="submit" value="생성" class="game-btn2">
+            </p>
+            <div class="check">
+            <p>게임 생성 시 체크사항</p>
+            <p>1. 게임이름은 숫자로 시작할 수 없습니다.</p>
+            <p>2. 게임이름 사이의 공백을 허용하지 않습니다.</p>
+            <p>4. 게임이름에는 특수문자를 포함할 수 없습니다.</p>
+            <p>진행중인 게임목록에서</p>
+            <p>참가하고 싶은 게임의 버튼을 클릭하세요!</p>
+          </div>
+          </form>
+      </div>
+    </div>
       <script>
         const gameButtons = document.querySelectorAll('.game-button');
         const joinForm = document.getElementById('joinForm');
@@ -53,14 +60,13 @@
             joinForm.submit();
           });
         });
-        window.onload = function() {
-                preventBack();
-                    window.onpageshow = function(event) {
-                        if (event.persisted) {
-                            preventBack();
-                        }
-                };
-            };
+        
+        const inputElement = document.querySelector('.gameName');
+
+        inputElement.addEventListener('input', (event) => {
+          const value = event.target.value;
+          event.target.value = value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9\s]/g, '');
+        });
       </script>
     
   </body>
