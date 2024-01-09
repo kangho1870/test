@@ -30,7 +30,7 @@
         <% for(var i = 0; i < 7; i++) { %>
             <table id="team<%= [i + 1] %>">
                 <tr>
-                    <% var teamSize = teams["teamScore" + (i + 1)].length + 1; %>
+                    <% var teamSize = teamScores["teamScore" + (i + 1)].length + 1; %>
                     <th rowspan="<%= teamSize %>">Team<%= [i + 1] %></th>
                     <th>No.</th>
                     <th>이름</th>
@@ -44,8 +44,8 @@
                     <th>4Game</th>
                     <th>4Game(+/-)</th>
                 </tr>
-                <% if (teams["teamScore" + (i + 1)]) { %>
-                    <% teams["teamScore" + (i + 1)].forEach((row, index) => { %>
+                <% if (teamScores["teamScore" + (i + 1)]) { %>
+                    <% teamScores["teamScore" + (i + 1)].forEach((row, index) => { %>
                         <tr>
                             <td><%= index + 1 %></td>
                             <td><%= row.userName %></td>
@@ -63,8 +63,8 @@
                 <% } %>
                 <tr>
                     <th colspan="4">합계</th>
-                    <% if (teamScores["team" + (i + 1)]) { %>
-                        <% teamScores["team" + (i + 1)].forEach((row, index) => { %>
+                    <% if (teams["team" + (i + 1)]) { %>
+                        <% teams["team" + (i + 1)].forEach((row, index) => { %>
                             <td class="game-cell"><%= row.sum_game1 %></td>
                             <td><%= row.sum_1game_p_m %></td>
                             <td class="game-cell"><%= row.sum_game2 %></td>
@@ -99,6 +99,7 @@
             </form>
         <% } %>
     </div>
+    
     <div class="table-center" style="overflow-x: auto; overflow-y: auto;">
             <table class="user-table">
                 <tr class="main-tr">

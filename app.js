@@ -34,19 +34,6 @@ const connection = mysql.createConnection({
   database: 'allcover'
 });
 
-// app.use(session({
-//   secret: 'kangho',
-//   resave: false,
-//   saveUninitialized: true,
-//   store: new MySQLStore({
-//     // MySQL 연결 정보
-//     host: 'localhost',
-//     user: 'root',
-//     password: 'root',
-//     database: 'allcover'
-//   })
-// }));
-
 app.get('/', (req, res) => {
   connection.query('select * from member', (error, results) => {
     if(error) {
@@ -55,35 +42,6 @@ app.get('/', (req, res) => {
       res.render('home', {results: results});
     }
   })
-});
-
-// post 요청의 url은 action으로 넘어오는 값이랑 같아야 함
-// app.post('/login', (req, res) => {
-//   const userName = req.body.userName;
-//   const userPassword = req.body.userPassword;
-//   const query = 'SELECT * FROM member WHERE memName = ? AND memPhoneNumber = ?';
-//   const values = [userName, userPassword];
-//   connection.query(query, values, (error, results) => {
-//     if (error) {
-//       throw error;
-//     } else {
-//       if (results.length > 0) {
-//         req.session.userName = userName;
-//         // 로그인 성공 시 /member 로 get 요청으로 바꾸어 다시 라우팅 함
-//         res.redirect('/select');
-//       } else {
-//         res.status(401).send('아이디 또는 비밀번호가 일치하지 않습니다.');
-//       }
-//     }
-//   });
-// });
-
-app.get('/protected', (req, res) => {
-  if(req.session.userName) {
-    res.send('보호된 페이지입니다.');
-  }else {
-    res.status(401).send('로그인이 필요합니다.');
-  }
 });
 
 app.get('/select', (req, res) => {
@@ -128,38 +86,108 @@ app.get('/member/:memid', (req, res) => {
     }
   });
 });
+// //app.get('/test', (req, res) => {
+//   const gameName = req.body.gameName;
+//   const memName = req.body.userName;
+//   const memAvg = req.body.userAvg;
 
-
-
-// app.post('/login', (req, res) => {
-//   const userName = req.body.userName;
-//   const userPassword = req.body.userPassword;
-//   const query = 'SELECT * FROM member WHERE memName = ? AND memPhoneNumber = ?';
-//   const values = [userName, userPassword];
-//   connection.query(query, values, (error, results) => {
+//   let teams = {
+//     teamScore1: [],
+//     teamScore2: [],
+//     teamScore3: [],
+//     teamScore4: [],
+//     teamScore5: [],
+//     teamScore6: [],
+//     teamScore7: []
+//   }
+  
+//   connection.query(`select * from ${gameName} order by teamNumber`, (error, results5) => {
 //     if (error) {
-//       throw error;
-//     } else {
-//       if (results.length > 0) {
-//         connection.query('select * from scorebord', (error2, results2) => {
-//           if(error2) {
-//             throw error2;
-//           }else {
-//             connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from scorebord where userName = '${userName}'`, (error, result) => {
-//               if(error) {
-//                 throw(error);
-//               }
-//               res.render('test', {userName: userName, results: results2, userName: result});
-//             })
-//           }
-//         })
-//         // 로그인 성공 시 /member 로 get 요청으로 바꾸어 다시 라우팅 함
-//       } else {
-//         res.status(401).send('아이디 또는 비밀번호가 일치하지 않습니다.');
-//       }
+//       console.error(error);
+//       return;
 //     }
-//   });
-// });
+  
+//     results5.forEach(result => {
+//       const { teamNumber } = result;
+//       switch (teamNumber) {
+//         case 1:
+//           teams.teamScore1.push(result);
+//           break;
+//         case 2:
+//           teams.teamScore2.push(result);
+//           break;
+//         case 3:
+//           teams.teamScore3.push(result);
+//           break;
+//         case 4:
+//           teams.teamScore4.push(result);
+//           break;
+//         case 5:
+//           teams.teamScore5.push(result);
+//           break;
+//         case 6:
+//           teams.teamScore6.push(result);
+//           break;
+//         case 7:
+//           teams.teamScore7.push(result);
+//           break;
+//         default:
+//           // 예외 처리: 팀 번호가 1에서 7 사이의 값이 아닌 경우
+//           console.warn(`잘못된 팀 번호: ${teamNumber}`);
+//       }
+//     });
+//   })
+
+//   let teamScores = {
+//     team1: [],
+//     team2: [],
+//     team3: [],
+//     team4: [],
+//     team5: [],
+//     team6: [],
+//     team7: []
+//   }
+//   connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+//     SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+//     SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+//     SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+//     FROM ${gameName}
+//     GROUP BY teamNumber
+//     ORDER BY teamNumber;`, (error, result3) => {
+//       if(error){
+//         console.log(error)
+//         return;
+//       }
+//       result3.forEach(result => {
+//         const { teamNumber } = result;
+//         switch (teamNumber) {
+//           case 1:
+//             teamScores.team1.push(result);
+//             break;
+//           case 2:
+//             teamScores.team2.push(result);
+//             break;
+//           case 3:
+//             teamScores.team3.push(result);
+//             break;
+//           case 4:
+//             teamScores.team4.push(result);
+//             break;
+//           case 5:
+//             teamScores.team5.push(result);
+//             break;
+//           case 6:
+//             teamScores.team6.push(result);
+//             break;
+//           case 7:
+//             teamScores.team7.push(result);
+//             break;
+//           default:
+//             console.warn(`잘못된 팀 번호: ${teamNumber}`);
+//         }
+//       })
+//     })
+
 
 app.post('/saveDb', (req, res) => {
   const gameName = req.body.gameName
@@ -237,717 +265,182 @@ app.post('/saveDb', (req, res) => {
   }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
     userLow = Math.min(parseInt(db1Game), parseInt(db2Game), parseInt(db3Game), parseInt(game4));
   }
+
   
-  // 게임 점수가 모두 0이 아닌 경우에만 데이터베이스 업데이트 수행
+
   if (parseInt(game1) !== 0 && parseInt(game2) == 0 && parseInt(game3) == 0 && parseInt(game4) == 0) {
-    // const query = `UPDATE scorebord SET 1Game = ${game1}, 1Game_P_M = ${game1PM}, 2Game = ${game2}, 2Game_P_M = ${game2PM}, 3Game = ${game3}, 3Game_P_M = ${game3PM}, 4Game = ${game4}, 4Game_P_M = ${game4PM}, userAvgMinusNowTotal = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`;
-  
     connection.query(`UPDATE ${gameName} SET 1Game = ${game1}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM},  userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
       if (error) {
         console.error('MySQL 데이터 삽입 오류:', error);
         res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-      } else {
-        connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${loggedName}'`, (error, result) => {
-          if (error) {
-            throw error;
-          } else {
-            connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-              if (error) {
-                throw error;
-              }else {
-                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                  if(error) {
-                    throw error
-                  }else {
-                    connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) =>{
-                      if(error) {
-                        throw error
-                      }else {
-                        connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                        if(error){
-                          throw error
-                        }else {
-                          connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) =>{
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                if(error){
-                                  throw error
-                                }else {
-                                  connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) =>{
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                      if(error){
-                                        throw error
-                                      }else {
-                                        connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) =>{
-                                          if (error) {
-                                            throw error;
-                                          } else {
-                                            connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                            if(error){
-                                              throw error
-                                            }else {
-                                              connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) =>{
-                                              if (error) {
-                                                throw error;
-                                              } else {
-                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                if(error){
-                                                  throw error
-                                                }else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) =>{
-                                                    if(error){
-                                                      throw error
-                                                    }else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                      if (error) {
-                                                        throw error;
-                                                      } else {
-                                                        connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7)=>{
-                                                          if(error){
-                                                            throw error
-                                                          }else {
-                                                            connection.query(`
-                                                              SELECT teamNumber, 
-                                                              SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                              SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                              SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                              SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                              RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                              RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                              RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                              RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                              FROM ${gameName}
-                                                              WHERE teamNumber BETWEEN 1 AND 7
-                                                              GROUP BY teamNumber;
-                                                            `, (error, teamRank) =>{
-                                                              if(error){
-                                                                throw error
-                                                              }else {
-                                                                const teams = {
-                                                                  team1: team1,
-                                                                  team2: team2,
-                                                                  team3: team3,
-                                                                  team4: team4,
-                                                                  team5: team5,
-                                                                  team6: team6,
-                                                                  team7: team7
-                                                                }
-                                                                const teamScores = {
-                                                                  teamScore1: teamScore1,
-                                                                  teamScore2: teamScore2,
-                                                                  teamScore3: teamScore3,
-                                                                  teamScore4: teamScore4,
-                                                                  teamScore5: teamScore5,
-                                                                  teamScore6: teamScore6,
-                                                                  teamScore7: teamScore7
-                                                                }
-                                                                  res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                });
-                                                              }
-                                                            })
-                                                          }
-                                                        })
-                                                      }
-                                                      });
-                                                    }
-                                                  })
-                                                }
-                                                });
-                                              }
-                                              });
-                                            }
-                                            });
-                                          }
-                                        });
-                                      }
-                                    });
-                                  }
-                                });
-                              }
-                            });
-                          }
-                        });
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
       }
-    })
-    }else if (parseInt(game1) == 0 && parseInt(game2) !== 0 && parseInt(game3) == 0 && parseInt(game4) == 0){
+    });
+  }else if(parseInt(game1) == 0 && parseInt(game2) !== 0 && parseInt(game3) == 0 && parseInt(game4) == 0){
     connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${game2}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
         if (error) {
             console.error('MySQL 데이터 삽입 오류:', error);
             res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        } else {
-            connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} where userName = '${loggedName}'`, (error, result) => {
-                if (error) {
-                    throw error;
-                } else {
-                    connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-                        if (error) {
-                            throw error;
-                        }else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                            if(error) {
-                              throw error
-                            }else {
-                              connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) =>{
-                                if(error) {
-                                  throw error
-                                }else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                                  if(error){
-                                    throw error
-                                  }else {
-                                    connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) =>{
-                                      if (error) {
-                                        throw error;
-                                      } else {
-                                        connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                          if(error){
-                                            throw error
-                                          }else {
-                                            connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) =>{
-                                              if (error) {
-                                                throw error;
-                                              } else {
-                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                                if(error){
-                                                  throw error
-                                                }else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) =>{
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                      if(error){
-                                                        throw error
-                                                      }else {
-                                                        connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) =>{
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                          if(error){
-                                                            throw error
-                                                          }else {
-                                                            connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) =>{
-                                                              if(error){
-                                                                throw error
-                                                              }else {
-                                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7)=>{
-                                                                    if(error){
-                                                                      throw error
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                    }
-                                                                  })
-                                                                }
-                                                                });
-                                                              }
-                                                            })
-                                                          }
-                                                          });
-                                                        }
-                                                        });
-                                                      }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              })
+        }
+      });
   }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) !== 0 && parseInt(game4) == 0){
     connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${game3}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
         if (error) {
             console.error('MySQL 데이터 삽입 오류:', error);
             res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        } else {
-            connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} where userName = '${loggedName}'`, (error, result) => {
-                if (error) {
-                    throw error;
-                } else {
-                    connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-                        if (error) {
-                            throw error;
-                        }else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                            if(error) {
-                              throw error
-                            }else {
-                              connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) =>{
-                                if(error) {
-                                  throw error
-                                }else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                                  if(error){
-                                    throw error
-                                  }else {
-                                    connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) =>{
-                                      if (error) {
-                                        throw error;
-                                      } else {
-                                        connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                          if(error){
-                                            throw error
-                                          }else {
-                                            connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) =>{
-                                              if (error) {
-                                                throw error;
-                                              } else {
-                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                                if(error){
-                                                  throw error
-                                                }else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) =>{
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                      if(error){
-                                                        throw error
-                                                      }else {
-                                                        connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) =>{
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                          if(error){
-                                                            throw error
-                                                          }else {
-                                                            connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) =>{
-                                                              if(error){
-                                                                throw error
-                                                              }else {
-                                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7)=>{
-                                                                    if(error){
-                                                                      throw error
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                    }
-                                                                  })
-                                                                }
-                                                                });
-                                                              }
-                                                            })
-                                                          }
-                                                          });
-                                                        }
-                                                        });
-                                                      }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              })
+        };
+      });
   }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) == 0 && parseInt(game4) !== 0){
     connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${game4}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
         if (error) {
             console.error('MySQL 데이터 삽입 오류:', error);
             res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        } else {
-            connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} where userName = '${loggedName}'`, (error, result) => {
-                if (error) {
-                    throw error;
-                } else {
-                    connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-                        if (error) {
-                            throw error;
-                        }else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                            if(error) {
-                              throw error
-                            }else {
-                              connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) =>{
-                                if(error) {
-                                  throw error
-                                }else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                                  if(error){
-                                    throw error
-                                  }else {
-                                    connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) =>{
-                                      if (error) {
-                                        throw error;
-                                      } else {
-                                        connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                          if(error){
-                                            throw error
-                                          }else {
-                                            connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) =>{
-                                              if (error) {
-                                                throw error;
-                                              } else {
-                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                                if(error){
-                                                  throw error
-                                                }else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) =>{
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                      if(error){
-                                                        throw error
-                                                      }else {
-                                                        connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) =>{
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                          if(error){
-                                                            throw error
-                                                          }else {
-                                                            connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) =>{
-                                                              if(error){
-                                                                throw error
-                                                              }else {
-                                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7)=>{
-                                                                    if(error){
-                                                                      throw error
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                    }
-                                                                  })
-                                                                }
-                                                                });
-                                                              }
-                                                            })
-                                                          }
-                                                          });
-                                                        }
-                                                        });
-                                                      }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              })
+      } 
+    });
   }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) == 0 && parseInt(game4) == 0){
-    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
+    game1PM = parseInt(db1Game) - parseInt(memAvg);
+    game2PM = parseInt(db2Game) - parseInt(memAvg);
+    game3PM = parseInt(db3Game) - parseInt(memAvg);
+    game4PM = parseInt(db4Game) - parseInt(memAvg);
+    userTotal = parseInt(db1Game) + parseInt(db2Game) + parseInt(db3Game) + parseInt(db4Game)
+    
+    if(parseInt(db1Game) == 0) {
+      game1PM = 0;
+    }else if(parseInt(db2Game) == 0) {
+      game2PM = 0;
+    }else if(parseInt(db3Game) == 0) {
+      game3PM = 0;
+    }else if(parseInt(db4Game) == 0) {
+      game4PM = 0;
+    }
+    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userTotal = ${userTotal} WHERE userName = '${loggedName}'`, (error, result, fields) => {
         if (error) {
             console.error('MySQL 데이터 삽입 오류:', error);
             res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        } else {
-            connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} where userName = '${loggedName}'`, (error, result) => {
-                if (error) {
-                    throw error;
-                } else {
-                    connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-                        if (error) {
-                            throw error;
-                        }else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                            if(error) {
-                              throw error
-                            }else {
-                              connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) =>{
-                                if(error) {
-                                  throw error
-                                }else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                                  if(error){
-                                    throw error
-                                  }else {
-                                    connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) =>{
-                                      if (error) {
-                                        throw error;
-                                      } else {
-                                        connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                          if(error){
-                                            throw error
-                                          }else {
-                                            connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) =>{
-                                              if (error) {
-                                                throw error;
-                                              } else {
-                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                                if(error){
-                                                  throw error
-                                                }else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) =>{
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                      if(error){
-                                                        throw error
-                                                      }else {
-                                                        connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) =>{
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                          if(error){
-                                                            throw error
-                                                          }else {
-                                                            connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) =>{
-                                                              if(error){
-                                                                throw error
-                                                              }else {
-                                                                connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7)=>{
-                                                                    if(error){
-                                                                      throw error
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                    }
-                                                                  })
-                                                                }
-                                                                });
-                                                              }
-                                                            })
-                                                          }
-                                                          });
-                                                        }
-                                                        });
-                                                      }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              })
-            }
-});
+        }
+      });
+  }
+  let teams = {
+    teamScore1: [],
+    teamScore2: [],
+    teamScore3: [],
+    teamScore4: [],
+    teamScore5: [],
+    teamScore6: [],
+    teamScore7: []
+  }
+  
+  connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+  
+    results5.forEach(result => {
+      const { teamNumber } = result;
+      switch (teamNumber) {
+        case 1:
+          teams.teamScore1.push(result);
+          break;
+        case 2:
+          teams.teamScore2.push(result);
+          break;
+        case 3:
+          teams.teamScore3.push(result);
+          break;
+        case 4:
+          teams.teamScore4.push(result);
+          break;
+        case 5:
+          teams.teamScore5.push(result);
+          break;
+        case 6:
+          teams.teamScore6.push(result);
+          break;
+        case 7:
+          teams.teamScore7.push(result);
+          break;
+      }
+    });
+  })
+
+  let teamScores = {
+    team1: [],
+    team2: [],
+    team3: [],
+    team4: [],
+    team5: [],
+    team6: [],
+    team7: []
+  }
+  connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+    SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+    SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+    SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+    FROM ${gameName}
+    GROUP BY teamNumber
+    ORDER BY teamNumber;`, (error, result3) => {
+      if(error){
+        console.log(error)
+      }
+      result3.forEach(result => {
+        const { teamNumber } = result;
+        switch (teamNumber) {
+          case 1:
+            teamScores.team1.push(result);
+            break;
+          case 2:
+            teamScores.team2.push(result);
+            break;
+          case 3:
+            teamScores.team3.push(result);
+            break;
+          case 4:
+            teamScores.team4.push(result);
+            break;
+          case 5:
+            teamScores.team5.push(result);
+            break;
+          case 6:
+            teamScores.team6.push(result);
+            break;
+          case 7:
+            teamScores.team7.push(result);
+            break;
+        }
+      })
+    })
+  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${loggedName}'`, (error, result) => {
+    if(error) {
+      throw error;
+    }else {
+      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
+        if (error) {
+          throw error;
+        }else {
+          connection.query(`
+            SELECT teamNumber, 
+            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
+            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
+            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
+            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
+            FROM ${gameName}
+            WHERE teamNumber BETWEEN 1 AND 7
+            GROUP BY teamNumber;`, (error, teamRank) =>{
+            if(error){
+              throw error
+            }else {
+              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
+            });
+          }
+        })
+      }
+    })
+  })
+
 
 
 // 로그인 gameselect 렌더링
@@ -1001,166 +494,153 @@ app.post('/createGame', (req, res) => {
       return;
     }
 
-    if (results.length > 0) {
-      console.log('이미 존재하는 게임입니다.');
-      res.status(400).send(`<script>alert('이미 존재하는 게임입니다.')</script>`);
-      return;
-    } else {
-      const createTableQuery = `CREATE TABLE ${gameName} (userName varchar(5), userAvg int, 1Game int, 1Game_P_M varchar(20), 2Game int, 2Game_P_M varchar(20), 3Game int, 3Game_P_M varchar(20), 4Game int, 4Game_P_M varchar(20), userThisAvg float, userTotal int, userHigh int, userLow int, teamNumber int)`;
-      connection.query(createTableQuery, (error, results) => {
+  if (results.length > 0) {
+    console.log('이미 존재하는 게임입니다.');
+    res.status(400).send(`<script>alert('이미 존재하는 게임입니다.')</script>`);
+    return;
+  }else {
+    const createTableQuery = `CREATE TABLE ${gameName} (userName varchar(5), userAvg int, 1Game int, 1Game_P_M varchar(20), 2Game int, 2Game_P_M varchar(20), 3Game int, 3Game_P_M varchar(20), 4Game int, 4Game_P_M varchar(20), userThisAvg float, userTotal int, userHigh int, userLow int, teamNumber int)`;
+    connection.query(createTableQuery, (error, results) => {
+      if (error) {
+        console.error('테이블 생성 실패:', error);
+        res.status(500).send('테이블 생성에 실패했습니다.');
+        return;
+      }
+      const insertUserQuery = `INSERT INTO ${gameName} (userName, userAvg) VALUES (?, ?)`;
+      connection.query(insertUserQuery, [memName, memAvg], (error, results) => {
         if (error) {
-          console.error('테이블 생성 실패:', error);
-          res.status(500).send('테이블 생성에 실패했습니다.');
+          console.error('사용자 추가 실패:', error);
+          res.status(500).send('사용자 추가에 실패했습니다.');
           return;
         }
-        const insertUserQuery = `INSERT INTO ${gameName} (userName, userAvg) VALUES (?, ?)`;
-        connection.query(insertUserQuery, [memName, memAvg], (error, results) => {
-          if (error) {
-            console.error('사용자 추가 실패:', error);
-            res.status(500).send('사용자 추가에 실패했습니다.');
-            return;
+        console.log('테이블이 성공적으로 생성되었습니다.');
+        console.log('사용자가 성공적으로 추가되었습니다.');
+      })
+    })
+    let teams = {
+      teamScore1: [],
+      teamScore2: [],
+      teamScore3: [],
+      teamScore4: [],
+      teamScore5: [],
+      teamScore6: [],
+      teamScore7: []
+    }
+    
+    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
+      if (error) {
+        console.error(error);
+      }
+    
+      results5.forEach(result => {
+        const { teamNumber } = result;
+        switch (teamNumber) {
+          case 1:
+            teams.teamScore1.push(result);
+            break;
+          case 2:
+            teams.teamScore2.push(result);
+            break;
+          case 3:
+            teams.teamScore3.push(result);
+            break;
+          case 4:
+            teams.teamScore4.push(result);
+            break;
+          case 5:
+            teams.teamScore5.push(result);
+            break;
+          case 6:
+            teams.teamScore6.push(result);
+            break;
+          case 7:
+            teams.teamScore7.push(result);
+            break;
+        }
+      });
+    })
+  
+    let teamScores = {
+      team1: [],
+      team2: [],
+      team3: [],
+      team4: [],
+      team5: [],
+      team6: [],
+      team7: []
+    }
+    connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+      SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+      SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+      SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+      FROM ${gameName}
+      GROUP BY teamNumber
+      ORDER BY teamNumber;`, (error, result3) => {
+        if(error){
+          console.log(error)
+        }
+        result3.forEach(result => {
+          const { teamNumber } = result;
+          switch (teamNumber) {
+            case 1:
+              teamScores.team1.push(result);
+              break;
+            case 2:
+              teamScores.team2.push(result);
+              break;
+            case 3:
+              teamScores.team3.push(result);
+              break;
+            case 4:
+              teamScores.team4.push(result);
+              break;
+            case 5:
+              teamScores.team5.push(result);
+              break;
+            case 6:
+              teamScores.team6.push(result);
+              break;
+            case 7:
+              teamScores.team7.push(result);
+              break;
           }
+        })
+      })
 
-          console.log('테이블이 성공적으로 생성되었습니다.');
-          console.log('사용자가 성공적으로 추가되었습니다.');
-          connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${memName}'`, (error, result) => {
-            if (error) {
-              throw error;
-            } else {
-              connection.query(`SELECT * FROM ${gameName}`, (error, results) => {
-                if (error) {
-                  throw error;
-                } else {
-                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                    if (error) {
-                      throw error;
-                    } else {
-                      connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) => {
-                        if (error) {
-                          throw error;
-                        } else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) => {
-                                if (error) {
-                                  throw error;
-                                } else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) => {
-                                        if (error) {
-                                          throw error;
-                                        } else {
-                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                            if (error) {
-                                              throw error;
-                                            } else {
-                                              connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) => {
-                                                if (error) {
-                                                  throw error;
-                                                } else {
-                                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) => {
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                            if (error) {
-                                                              throw error;
-                                                            } else {
-                                                              connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                    if (error) {
-                                                                      throw error;
-                                                                    } else {
-                                                                      connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7) => {
-                                                                        if (error) {
-                                                                          throw error;
-                                                                        }else {
-                                                                          connection.query(`
-                                                                            SELECT teamNumber, 
-                                                                            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                            FROM ${gameName}
-                                                                            WHERE teamNumber BETWEEN 1 AND 7
-                                                                            GROUP BY teamNumber;
-                                                                          `, (error, teamRank) =>{
-                                                                            if(error){
-                                                                              throw error
-                                                                            }else {
-                                                                              const teams = {
-                                                                                team1: team1,
-                                                                                team2: team2,
-                                                                                team3: team3,
-                                                                                team4: team4,
-                                                                                team5: team5,
-                                                                                team6: team6,
-                                                                                team7: team7
-                                                                              }
-                                                                              const teamScores = {
-                                                                                teamScore1: teamScore1,
-                                                                                teamScore2: teamScore2,
-                                                                                teamScore3: teamScore3,
-                                                                                teamScore4: teamScore4,
-                                                                                teamScore5: teamScore5,
-                                                                                teamScore6: teamScore6,
-                                                                                teamScore7: teamScore7
-                                                                              }
-                                                                                res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                              });
-                                                                            }
-                                                                          })
-                                                                    }
-                                                                  })
-                                                                }
-                                                              })
-                                                            }
-                                                          })
-                                                        }
-                                                      })
-                                                    }
-                                                  })
-                                                }
-                                              })
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
+  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
+    if (error) {
+      throw error;
+    } else {
+      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
+        if (error) {
+          throw error;
+        }else {
+          connection.query(`
+            SELECT teamNumber, 
+            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
+            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
+            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
+            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
+            FROM ${gameName}
+            WHERE teamNumber BETWEEN 1 AND 7
+            GROUP BY teamNumber;
+          `, (error, teamRank) =>{
+            if(error){
+              throw error
+            }else {
+              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
               });
             }
-          });
-        });
-      });
+          })
+        }
+      })
     }
-  });
-});
+  })
+})
 
 app.post('/joinGame', (req, res) => {
   const gameName = req.body.joinGame;
@@ -1176,278 +656,138 @@ app.post('/joinGame', (req, res) => {
       connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${memName}'`, (error, result) => {
         if (error) {
           throw error;
-        } else {
-          connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-            if (error) {
-              throw error;
-            } else {
-              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                if (error) {
-                  throw error;
-                } else {
-                  connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) => {
-                    if (error) {
-                      throw error;
-                    } else {
-                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                        if (error) {
-                          throw error;
-                        } else {
-                          connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) => {
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                if (error) {
-                                  throw error;
-                                } else {
-                                  connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) => {
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                        if (error) {
-                                          throw error;
-                                        } else {
-                                          connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) => {
-                                            if (error) {
-                                              throw error;
-                                            } else {
-                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                if (error) {
-                                                  throw error;
-                                                } else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) => {
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) => {
-                                                            if (error) {
-                                                              throw error;
-                                                            } else {
-                                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7) => {
-                                                                    if (error) {
-                                                                      throw error;
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                }
-                                                              })
-                                                            }
-                                                          })
-                                                        }
-                                                      })
-                                                    }
-                                                  })
-                                                }
-                                              })
-                                            }
-                                          })
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
         }
-      });
-    } else {
+      })
+    }else {
       connection.query(`insert into ${gameName} (userName, userAvg) values (?, ?)`, [memName, memAvg], (error, result) => {
         if (error) {
           throw error;
         }
       })
-      connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
+      let teams = {
+        teamScore1: [],
+        teamScore2: [],
+        teamScore3: [],
+        teamScore4: [],
+        teamScore5: [],
+        teamScore6: [],
+        teamScore7: []
+      }
+      
+      connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
+        if (error) {
+          console.error(error);
+        }
+      
+        results5.forEach(result => {
+          const { teamNumber } = result;
+          switch (teamNumber) {
+            case 1:
+              teams.teamScore1.push(result);
+              break;
+            case 2:
+              teams.teamScore2.push(result);
+              break;
+            case 3:
+              teams.teamScore3.push(result);
+              break;
+            case 4:
+              teams.teamScore4.push(result);
+              break;
+            case 5:
+              teams.teamScore5.push(result);
+              break;
+            case 6:
+              teams.teamScore6.push(result);
+              break;
+            case 7:
+              teams.teamScore7.push(result);
+              break;
+          }
+        });
+      })
+    
+      let teamScores = {
+        team1: [],
+        team2: [],
+        team3: [],
+        team4: [],
+        team5: [],
+        team6: [],
+        team7: []
+      }
+      connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+        SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+        SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+        SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+        FROM ${gameName}
+        GROUP BY teamNumber
+        ORDER BY teamNumber;`, (error, result3) => {
+          if(error){
+            console.log(error)
+          }
+          result3.forEach(result => {
+            const { teamNumber } = result;
+            switch (teamNumber) {
+              case 1:
+                teamScores.team1.push(result);
+                break;
+              case 2:
+                teamScores.team2.push(result);
+                break;
+              case 3:
+                teamScores.team3.push(result);
+                break;
+              case 4:
+                teamScores.team4.push(result);
+                break;
+              case 5:
+                teamScores.team5.push(result);
+                break;
+              case 6:
+                teamScores.team6.push(result);
+                break;
+              case 7:
+                teamScores.team7.push(result);
+                break;
+            }
+          })
+        })
+  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
+    if (error) {
+      throw error;
+    } else {
+      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
         if (error) {
           throw error;
-        } else {
-          connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-            if (error) {
-              throw error;
-            } else {
-              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                if (error) {
-                  throw error;
-                } else {
-                  connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) => {
-                    if (error) {
-                      throw error;
-                    } else {
-                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                        if (error) {
-                          throw error;
-                        } else {
-                          connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) => {
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                if (error) {
-                                  throw error;
-                                } else {
-                                  connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) => {
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                        if (error) {
-                                          throw error;
-                                        } else {
-                                          connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) => {
-                                            if (error) {
-                                              throw error;
-                                            } else {
-                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                if (error) {
-                                                  throw error;
-                                                } else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) => {
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) => {
-                                                            if (error) {
-                                                              throw error;
-                                                            } else {
-                                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7) => {
-                                                                    if (error) {
-                                                                      throw error;
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                }
-                                                              })
-                                                            }
-                                                          })
-                                                        }
-                                                      })
-                                                    }
-                                                  })
-                                                }
-                                              })
-                                            }
-                                          })
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
+        }else {
+          connection.query(`
+            SELECT teamNumber, 
+            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
+            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
+            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
+            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
+            FROM ${gameName}
+            WHERE teamNumber BETWEEN 1 AND 7
+            GROUP BY teamNumber;
+          `, (error, teamRank) =>{
+            if(error){
+              throw error
+            }else {
+              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
               });
             }
-          });
+          })
         }
-      });
+      })
     }
-  });
+  })
 })
+
 
 app.post('/teamJoin', (req, res) => {
   const loggedName = req.body.joinGameuserName
@@ -1458,140 +798,128 @@ app.post('/teamJoin', (req, res) => {
     if (error) {
       throw error;
     }
-    connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${loggedName}'`, (error, result) => {
+    let teams = {
+      teamScore1: [],
+      teamScore2: [],
+      teamScore3: [],
+      teamScore4: [],
+      teamScore5: [],
+      teamScore6: [],
+      teamScore7: []
+    }
+    
+    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
       if (error) {
-        throw error;
+        console.error(error);
       }
-      connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-        if (error) {
-          throw error;
-        } else {
-          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-            if (error) {
-              throw error;
-            } else {
-              connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) => {
-                if (error) {
-                  throw error;
-                } else {
-                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                    if (error) {
-                      throw error;
-                    } else {
-                      connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) => {
-                        if (error) {
-                          throw error;
-                        } else {
-                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) => {
-                                if (error) {
-                                  throw error;
-                                } else {
-                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) => {
-                                        if (error) {
-                                          throw error;
-                                        } else {
-                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                            if (error) {
-                                              throw error;
-                                            } else {
-                                              connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) => {
-                                                if (error) {
-                                                  throw error;
-                                                } else {
-                                                  connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) => {
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                            if (error) {
-                                                              throw error;
-                                                            } else {
-                                                              connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                }else {
-                                                                  connection.query(`
-                                                                    SELECT teamNumber, 
-                                                                    SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                    SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                    SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                    SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                    RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                    RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                    RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                    RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                    FROM ${gameName}
-                                                                    WHERE teamNumber BETWEEN 1 AND 7
-                                                                    GROUP BY teamNumber;
-                                                                  `, (error, teamRank) =>{
-                                                                    if(error){
-                                                                      throw error
-                                                                    }else {
-                                                                      const teams = {
-                                                                        team1: team1,
-                                                                        team2: team2,
-                                                                        team3: team3,
-                                                                        team4: team4,
-                                                                        team5: team5,
-                                                                        team6: team6,
-                                                                        team7: team7
-                                                                      }
-                                                                      const teamScores = {
-                                                                        teamScore1: teamScore1,
-                                                                        teamScore2: teamScore2,
-                                                                        teamScore3: teamScore3,
-                                                                        teamScore4: teamScore4,
-                                                                        teamScore5: teamScore5,
-                                                                        teamScore6: teamScore6,
-                                                                        teamScore7: teamScore7
-                                                                      }
-                                                                        res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                      });
-                                                                    }
-                                                                  })
-                                                            }
-                                                          });
-                                                        }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
+    
+      results5.forEach(result => {
+        const { teamNumber } = result;
+        switch (teamNumber) {
+          case 1:
+            teams.teamScore1.push(result);
+            break;
+          case 2:
+            teams.teamScore2.push(result);
+            break;
+          case 3:
+            teams.teamScore3.push(result);
+            break;
+          case 4:
+            teams.teamScore4.push(result);
+            break;
+          case 5:
+            teams.teamScore5.push(result);
+            break;
+          case 6:
+            teams.teamScore6.push(result);
+            break;
+          case 7:
+            teams.teamScore7.push(result);
+            break;
         }
       });
-    });
-  });
-});
+    })
+  
+    let teamScores = {
+      team1: [],
+      team2: [],
+      team3: [],
+      team4: [],
+      team5: [],
+      team6: [],
+      team7: []
+    }
+    connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+      SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+      SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+      SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+      FROM ${gameName}
+      GROUP BY teamNumber
+      ORDER BY teamNumber;`, (error, result3) => {
+        if(error){
+          console.log(error)
+        }
+        result3.forEach(result => {
+          const { teamNumber } = result;
+          switch (teamNumber) {
+            case 1:
+              teamScores.team1.push(result);
+              break;
+            case 2:
+              teamScores.team2.push(result);
+              break;
+            case 3:
+              teamScores.team3.push(result);
+              break;
+            case 4:
+              teamScores.team4.push(result);
+              break;
+            case 5:
+              teamScores.team5.push(result);
+              break;
+            case 6:
+              teamScores.team6.push(result);
+              break;
+            case 7:
+              teamScores.team7.push(result);
+              break;
+          }
+        })
+      })  
+  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${loggedName}'`, (error, result) => {
+  if (error) {
+    throw error;
+  } else {
+    connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
+      if (error) {
+        throw error;
+      }else {
+        connection.query(`
+          SELECT teamNumber, 
+          SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
+          SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
+          SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
+          SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
+          RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
+          RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
+          RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
+          RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
+          FROM ${gameName}
+          WHERE teamNumber BETWEEN 1 AND 7
+          GROUP BY teamNumber;
+        `, (error, teamRank) =>{
+          if(error){
+            throw error
+          }else {
+            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
+            });
+          }
+        })
+      }
+    })
+  })
+})
 
 app.post('/resetTeam', (req, res) => {
   const loggedName = req.body.resetTeamuserName;
