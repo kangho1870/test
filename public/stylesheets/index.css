@@ -500,6 +500,26 @@ td {
         left: 50%;
         transform: translate(-50%, -50%);
     }
+    .ceremony {
+        display: flex;
+        flex-direction: row;
+    }
+    table {
+        table-layout: fixed;
+      }
+      
+      td, th {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    .total_ceremony,
+    .grade1_side,
+    .avg_side,
+    .game_setting {
+        flex: 1;
+        width: 200px;
+    }
 }
 @media (min-width: 601px) {
     /* 데스크톱 화면에 대한 스타일 지정 */

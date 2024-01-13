@@ -20,6 +20,7 @@
               <% result.forEach((row, index) => { %>
               <input type="hidden" value="<%= row.memName %>" name="memName">
               <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
+              <input type="hidden" value="<%= row.gender %>" name="memGender">
               <% }) %>
             </form>
           <% }); %>
@@ -32,6 +33,7 @@
           <% result.forEach((row, index) => { %>
             <input type="hidden" name="userName" value="<%= row.memName %>" >
             <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+            <input type="hidden" value="<%= row.gender %>" name="memGender">
             <% }); %>
             <p>
             <input type="submit" value="생성" class="game-btn2">
