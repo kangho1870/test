@@ -2632,6 +2632,7 @@ app.post('/queryCeremony', (req, res) =>{
         if(error){
           console.log(error)
         }
+        console.log(result)
       })
     })
    
@@ -2661,7 +2662,7 @@ app.post('/queryCeremony', (req, res) =>{
           SELECT userName, 
             (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
           FROM ${gameName}
-          WHERE grade = ${n + 1}
+          WHERE grade = ${n + 1} and checking is null
           ORDER BY avgTotal DESC
           LIMIT 1;
         `, (error, results) => {
