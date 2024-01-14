@@ -554,68 +554,40 @@ app.post('/saveDb', (req, res) => {
                 throw error
               }else {
                 connection.query(`
-                  SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-                  FROM (
-                    SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                    FROM ${gameName}
-                    WHERE avg_side = 1
-                  ) AS subquery
-                  ORDER BY 1Game_Rank
+                SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+                FROM ${gameName}
+                WHERE avg_side = 1
+                ORDER BY 1Game_P_M desc;
                     limit 7;
                   `, (error, avgGame1) =>{
                     if(error){
                       console.log(error)
                     }else {
                       connection.query(`
-                      SELECT 
-                        userName,
-                        RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                      FROM (
-                        SELECT 
-                        userName,
-                        RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
+                        SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
                         FROM ${gameName}
                         WHERE avg_side = 1
-                      ) AS subquery
-                      ORDER BY 2Game_Rank
+                        ORDER BY 2Game_P_M desc;
                         limit 7;
                       `, (error, avgGame2) =>{
                         if(error){
                           console.log(error)
                         }else{
                           connection.query(`
-                            SELECT 
-                              userName,
-                              RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                            FROM (
-                              SELECT 
-                              userName,
-                              RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                              FROM ${gameName}
-                              WHERE avg_side = 1
-                            ) AS subquery
-                            ORDER BY 3Game_Rank
+                            SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                            FROM ${gameName}
+                            WHERE avg_side = 1
+                            ORDER BY 3Game_P_M desc;
                               limit 7;
                             `, (error, avgGame3) =>{
                               if(error){
                                 console.log(error)
                               }else{
                                 connection.query(`
-                                  SELECT 
-                                    userName,
-                                    RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                                  FROM (
-                                    SELECT 
-                                    userName,
-                                    RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                    FROM ${gameName}
-                                    WHERE avg_side = 1
-                                  ) AS subquery
-                                  ORDER BY 4Game_Rank
+                                  SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                                  FROM ${gameName}
+                                  WHERE avg_side = 1
+                                  ORDER BY 4Game_P_M desc;
                                     limit 7;
                                   `, (error, avgGame4) =>{
                                     if(error){
@@ -1011,68 +983,40 @@ app.post('/createGame', (req, res) => {
               throw error
             }else {
               connection.query(`
-                SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-                FROM (
-                  SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                  FROM ${gameName}
-                  WHERE avg_side = 1
-                ) AS subquery
-                ORDER BY 1Game_Rank
+                SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+                FROM ${gameName}
+                WHERE avg_side = 1
+                ORDER BY 1Game_P_M desc;
                   limit 7;
                 `, (error, avgGame1) =>{
                   if(error){
                     console.log(error)
                   }else {
                     connection.query(`
-                    SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                    FROM (
-                      SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
-                      FROM ${gameName}
-                      WHERE avg_side = 1
-                    ) AS subquery
-                    ORDER BY 2Game_Rank
+                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 2Game_P_M desc;
                       limit 7;
                     `, (error, avgGame2) =>{
                       if(error){
                         console.log(error)
                       }else{
                         connection.query(`
-                          SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                          FROM (
-                            SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                          ) AS subquery
-                          ORDER BY 3Game_Rank
+                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 3Game_P_M desc;
                             limit 7;
                           `, (error, avgGame3) =>{
                             if(error){
                               console.log(error)
                             }else{
                               connection.query(`
-                                SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                                FROM (
-                                  SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                  FROM ${gameName}
-                                  WHERE avg_side = 1
-                                ) AS subquery
-                                ORDER BY 4Game_Rank
+                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                              FROM ${gameName}
+                              WHERE avg_side = 1
+                              ORDER BY 4Game_P_M desc;
                                   limit 7;
                                 `, (error, avgGame4) =>{
                                   if(error){
@@ -1442,68 +1386,40 @@ app.post('/joinGame', (req, res) => {
               throw error
             }else {
               connection.query(`
-                SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-                FROM (
-                  SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                  FROM ${gameName}
-                  WHERE avg_side = 1
-                ) AS subquery
-                ORDER BY 1Game_Rank
+              SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+              FROM ${gameName}
+              WHERE avg_side = 1
+              ORDER BY 1Game_P_M desc;
                   limit 7;
                 `, (error, avgGame1) =>{
                   if(error){
                     console.log(error)
                   }else {
                     connection.query(`
-                    SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                    FROM (
-                      SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
-                      FROM ${gameName}
-                      WHERE avg_side = 1
-                    ) AS subquery
-                    ORDER BY 2Game_Rank
+                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 2Game_P_M desc;
                       limit 7;
                     `, (error, avgGame2) =>{
                       if(error){
                         console.log(error)
                       }else{
                         connection.query(`
-                          SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                          FROM (
-                            SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                          ) AS subquery
-                          ORDER BY 3Game_Rank
+                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 3Game_P_M desc;
                             limit 7;
                           `, (error, avgGame3) =>{
                             if(error){
                               console.log(error)
                             }else{
                               connection.query(`
-                                SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                                FROM (
-                                  SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                  FROM ${gameName}
-                                  WHERE avg_side = 1
-                                ) AS subquery
-                                ORDER BY 4Game_Rank
+                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                              FROM ${gameName}
+                              WHERE avg_side = 1
+                              ORDER BY 4Game_P_M desc;
                                   limit 7;
                                 `, (error, avgGame4) =>{
                                   if(error){
@@ -1844,68 +1760,40 @@ app.post('/teamJoin', (req, res) => {
               throw error
             }else {
               connection.query(`
-                SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-                FROM (
-                  SELECT 
-                  userName,
-                  RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                  FROM ${gameName}
-                  WHERE avg_side = 1
-                ) AS subquery
-                ORDER BY 1Game_Rank
+              SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+              FROM ${gameName}
+              WHERE avg_side = 1
+              ORDER BY 1Game_P_M desc;
                   limit 7;
                 `, (error, avgGame1) =>{
                   if(error){
                     console.log(error)
                   }else {
                     connection.query(`
-                    SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                    FROM (
-                      SELECT 
-                      userName,
-                      RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
-                      FROM ${gameName}
-                      WHERE avg_side = 1
-                    ) AS subquery
-                    ORDER BY 2Game_Rank
+                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 2Game_P_M desc;
                       limit 7;
                     `, (error, avgGame2) =>{
                       if(error){
                         console.log(error)
                       }else{
                         connection.query(`
-                          SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                          FROM (
-                            SELECT 
-                            userName,
-                            RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                          ) AS subquery
-                          ORDER BY 3Game_Rank
+                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 3Game_P_M desc;
                             limit 7;
                           `, (error, avgGame3) =>{
                             if(error){
                               console.log(error)
                             }else{
                               connection.query(`
-                                SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                                FROM (
-                                  SELECT 
-                                  userName,
-                                  RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                  FROM ${gameName}
-                                  WHERE avg_side = 1
-                                ) AS subquery
-                                ORDER BY 4Game_Rank
+                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                              FROM ${gameName}
+                              WHERE avg_side = 1
+                              ORDER BY 4Game_P_M desc;
                                   limit 7;
                                 `, (error, avgGame4) =>{
                                   if(error){
@@ -2406,68 +2294,40 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
             throw error
           }else {
             connection.query(`
-              SELECT 
-                userName,
-                RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-              FROM (
-                SELECT 
-                userName,
-                RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                FROM ${gameName}
-                WHERE avg_side = 1
-              ) AS subquery
-              ORDER BY 1Game_Rank
+            SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+            FROM ${gameName}
+            WHERE avg_side = 1
+            ORDER BY 1Game_P_M desc;
                 limit 7;
               `, (error, avgGame1) =>{
                 if(error){
                   console.log(error)
                 }else {
                   connection.query(`
-                  SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                  FROM (
-                    SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
-                    FROM ${gameName}
-                    WHERE avg_side = 1
-                  ) AS subquery
-                  ORDER BY 2Game_Rank
+                  SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 2Game_P_M desc;
                     limit 7;
                   `, (error, avgGame2) =>{
                     if(error){
                       console.log(error)
                     }else{
                       connection.query(`
-                        SELECT 
-                          userName,
-                          RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                        FROM (
-                          SELECT 
-                          userName,
-                          RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                          FROM ${gameName}
-                          WHERE avg_side = 1
-                        ) AS subquery
-                        ORDER BY 3Game_Rank
+                      SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                      FROM ${gameName}
+                      WHERE avg_side = 1
+                      ORDER BY 3Game_P_M desc;
                           limit 7;
                         `, (error, avgGame3) =>{
                           if(error){
                             console.log(error)
                           }else{
                             connection.query(`
-                              SELECT 
-                                userName,
-                                RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                              FROM (
-                                SELECT 
-                                userName,
-                                RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                FROM ${gameName}
-                                WHERE avg_side = 1
-                              ) AS subquery
-                              ORDER BY 4Game_Rank
+                            SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                            FROM ${gameName}
+                            WHERE avg_side = 1
+                            ORDER BY 4Game_P_M desc;
                                 limit 7;
                               `, (error, avgGame4) =>{
                                 if(error){
@@ -2834,68 +2694,40 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
             throw error
           }else {
             connection.query(`
-              SELECT 
-                userName,
-                RANK() OVER (ORDER BY 1Game_Rank) AS 1Game_Rank
-              FROM (
-                SELECT 
-                userName,
-                RANK() OVER (ORDER BY 1Game_P_M DESC, userAvg DESC) AS 1Game_Rank
-                FROM ${gameName}
-                WHERE avg_side = 1
-              ) AS subquery
-              ORDER BY 1Game_Rank
+            SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+            FROM ${gameName}
+            WHERE avg_side = 1
+            ORDER BY 1Game_P_M desc;
                 limit 7;
               `, (error, avgGame1) =>{
                 if(error){
                   console.log(error)
                 }else {
                   connection.query(`
-                  SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 2Game_Rank) AS 2Game_Rank
-                  FROM (
-                    SELECT 
-                    userName,
-                    RANK() OVER (ORDER BY 2Game_P_M DESC, userAvg DESC) AS 2Game_Rank
-                    FROM ${gameName}
-                    WHERE avg_side = 1
-                  ) AS subquery
-                  ORDER BY 2Game_Rank
+                  SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                        FROM ${gameName}
+                        WHERE avg_side = 1
+                        ORDER BY 2Game_P_M desc;
                     limit 7;
                   `, (error, avgGame2) =>{
                     if(error){
                       console.log(error)
                     }else{
                       connection.query(`
-                        SELECT 
-                          userName,
-                          RANK() OVER (ORDER BY 3Game_Rank) AS 3Game_Rank
-                        FROM (
-                          SELECT 
-                          userName,
-                          RANK() OVER (ORDER BY 3Game_P_M DESC, userAvg DESC) AS 3Game_Rank
-                          FROM ${gameName}
-                          WHERE avg_side = 1
-                        ) AS subquery
-                        ORDER BY 3Game_Rank
+                      SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                      FROM ${gameName}
+                      WHERE avg_side = 1
+                      ORDER BY 3Game_P_M desc;
                           limit 7;
                         `, (error, avgGame3) =>{
                           if(error){
                             console.log(error)
                           }else{
                             connection.query(`
-                              SELECT 
-                                userName,
-                                RANK() OVER (ORDER BY 4Game_Rank) AS 4Game_Rank
-                              FROM (
-                                SELECT 
-                                userName,
-                                RANK() OVER (ORDER BY 4Game_P_M DESC, userAvg DESC) AS 4Game_Rank
-                                FROM ${gameName}
-                                WHERE avg_side = 1
-                              ) AS subquery
-                              ORDER BY 4Game_Rank
+                            SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                            FROM ${gameName}
+                            WHERE avg_side = 1
+                            ORDER BY 4Game_P_M desc;
                                 limit 7;
                               `, (error, avgGame4) =>{
                                 if(error){
