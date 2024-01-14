@@ -679,7 +679,7 @@ app.post('/saveDb', (req, res) => {
                                                         }
                                                         connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
                                                           connection.query(`select management from member where memName = '${loggedName}' and management = 1;`, (error, management) =>{
-                                                            if(management.management == 1) {
+                                                            if(management.length == 1) {
                                                               res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
                                                             }else {
                                                               res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
