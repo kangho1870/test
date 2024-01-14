@@ -65,13 +65,13 @@
                     <% if (teamScores["team" + (i + 1)]) { %>
                         <% teamScores["team" + (i + 1)].forEach((row, index) => { %>
                             <td class="game-cell"><%= row.sum_game1 %></td>
-                            <td><%= row.sum_1game_p_m %></td>
+                            <td class="game_P_M-cell"><%= row.sum_1game_p_m %></td>
                             <td class="game-cell"><%= row.sum_game2 %></td>
-                            <td><%= row.sum_2game_p_m %></td>
+                            <td class="game_P_M-cell"><%= row.sum_2game_p_m %></td>
                             <td class="game-cell"><%= row.sum_game3 %></td>
-                            <td><%= row.sum_3game_p_m %></td>
+                            <td class="game_P_M-cell"><%= row.sum_3game_p_m %></td>
                             <td class="game-cell"><%= row.sum_game4 %></td>
-                            <td><%= row.sum_4game_p_m %></td>
+                            <td class="game_P_M-cell"><%= row.sum_4game_p_m %></td>
                         <% }) %>
                     <% } %>
                 </tr>
@@ -182,12 +182,6 @@
                     
                     <table>
                         <tr>
-                            <th colspan="<%= team1st.length %>">팀 1등</th>
-                            <% team1st.forEach(function(member) { %>
-                                <td><%= member.userName %></td>
-                            <% }) %>
-                        </tr>
-                        <tr>
                             <th colspan="<%= team1st.length %>">총핀</th>
                             <td colspan="<%= team1st.length %>"><%= pin1st[0]?.userName %></td>
                         </tr>
@@ -218,6 +212,12 @@
                         <tr>
                             <th colspan="<%= team1st.length %>">여자 하이</th>
                             <td colspan="<%= team1st.length %>"><%= womanHigh?.userName || ''%></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">팀 1등</th>
+                            <% team1st.forEach(function(member) { %>
+                                <td><%= member.userName %></td>
+                            <% }) %>
                         </tr>
                     </table>
                     <% userName.forEach((row) =>{ %>
