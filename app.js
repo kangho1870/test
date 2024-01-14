@@ -1390,7 +1390,7 @@ app.post('/joinGame', (req, res) => {
               FROM ${gameName}
               WHERE avg_side = 1
               ORDER BY 1Game_P_M desc
-                  limit 7;
+              limit 7;
                 `, (error, avgGame1) =>{
                   if(error){
                     console.log(error)
@@ -2219,7 +2219,7 @@ app.post('/gameSetting', (req, res) =>{
         console.log(error)
       }
       if (result && result.length > 0) {
-        manHigh = result[0].userName
+        manHigh = result[0]?.userName
       } else {
         manHigh = null;
       }
@@ -2236,7 +2236,7 @@ app.post('/gameSetting', (req, res) =>{
         console.log(error)
       }
       if (result && result.length > 0) {
-        womanHigh = result[0].userName
+        womanHigh = result[0]?.userName
       } else {
         womanHigh = null;
       }
@@ -2297,7 +2297,7 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
             SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
             FROM ${gameName}
             WHERE avg_side = 1
-            ORDER BY 1Game_P_M desc;
+            ORDER BY 1Game_P_M desc
                 limit 7
               `, (error, avgGame1) =>{
                 if(error){
@@ -2307,7 +2307,7 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
                   SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
                         FROM ${gameName}
                         WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc;
+                        ORDER BY 2Game_P_M desc
                     limit 7
                   `, (error, avgGame2) =>{
                     if(error){
@@ -2317,7 +2317,7 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
                       SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
                       FROM ${gameName}
                       WHERE avg_side = 1
-                      ORDER BY 3Game_P_M desc;
+                      ORDER BY 3Game_P_M desc
                           limit 7
                         `, (error, avgGame3) =>{
                           if(error){
@@ -2327,7 +2327,7 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
                             SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
                             FROM ${gameName}
                             WHERE avg_side = 1
-                            ORDER BY 4Game_P_M desc;
+                            ORDER BY 4Game_P_M desc
                                 limit 7
                               `, (error, avgGame4) =>{
                                 if(error){
