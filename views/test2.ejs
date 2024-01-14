@@ -24,13 +24,12 @@
                     <input type="hidden" name="resetTeamuserName" value="<%= row.userName%>">
                 <% }) %>
                 <input type="hidden" name="resetTeamGameName" value="<%= gameName %>">
-                <input type="submit" value="reset">
             </form>
         </div>
         <% for(var i = 0; i < 7; i++) { %>
             <table id="team<%= [i + 1] %>">
                 <tr>
-                    <% var teamSize = teamScores["teamScore" + (i + 1)].length + 1; %>
+                    <% var teamSize = teams["teamScore" + (i + 1)].length + 1; %>
                     <th rowspan="<%= teamSize %>">Team<%= [i + 1] %></th>
                     <th>No.</th>
                     <th>이름</th>
@@ -44,8 +43,8 @@
                     <th>4Game</th>
                     <th>4Game(+/-)</th>
                 </tr>
-                <% if (teamScores["teamScore" + (i + 1)]) { %>
-                    <% teamScores["teamScore" + (i + 1)].forEach((row, index) => { %>
+                <% if (teams["teamScore" + (i + 1)]) { %>
+                    <% teams["teamScore" + (i + 1)].forEach((row, index) => { %>
                         <tr>
                             <td><%= index + 1 %></td>
                             <td><%= row.userName %></td>
@@ -63,8 +62,8 @@
                 <% } %>
                 <tr>
                     <th colspan="4">합계</th>
-                    <% if (teams["team" + (i + 1)]) { %>
-                        <% teams["team" + (i + 1)].forEach((row, index) => { %>
+                    <% if (teamScores["team" + (i + 1)]) { %>
+                        <% teamScores["team" + (i + 1)].forEach((row, index) => { %>
                             <td class="game-cell"><%= row.sum_game1 %></td>
                             <td><%= row.sum_1game_p_m %></td>
                             <td class="game-cell"><%= row.sum_game2 %></td>
@@ -99,7 +98,6 @@
             </form>
         <% } %>
     </div>
-    
     <div class="table-center" style="overflow-x: auto; overflow-y: auto;">
             <table class="user-table">
                 <tr class="main-tr">
@@ -140,7 +138,141 @@
                 <% }); %>
             </table>
         </div>
-        
+        <div class="ceremony" style="display: none;">
+            <div class="game_setting">
+                <form method="post" action="/gameSetting">
+                    <input type="hidden" name="gameSettingGameName" value="<%= gameName %>">
+                    <% userName.forEach((row) =>{ %>
+                        <input type="hidden" name="gameSettingUserName" value="<%= row.userName %>">
+                    <% }) %>
+                    <table>
+                        <tr>
+                            <th rowspan="2">No.</th>
+                            <th rowspan="2">이름</th>
+                            <th rowspan="2">에버</th>
+                            <th>군 설정</th>
+                            <th rowspan="2">1군 판게임</th>
+                            <th rowspan="2">에버 판게임</th>
+                        </tr>
+                        <tr>
+                            <th>1군 2군 3군 4군</th>
+                        </tr>
+                        <% settings.forEach((row, index) => { %>
+                        <tr>
+                            <th><%= index + 1 %></th>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td>
+                                <input type="hidden" name="gameSettings[<%= index %>][userName]" value="<%= row.userName %>">
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="1" <%= row.grade === 1 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="2" <%= row.grade === 2 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="3" <%= row.grade === 3 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="4" <%= row.grade === 4 ? 'checked' : '' %> disabled>
+                            </td>
+                            <td><input type="checkbox" name="gameSettings[<%= index %>][grade1Game]" value="1" <%= row.grade1_side === 1 ? 'checked' : '' %>></td>
+                            <td><input type="checkbox" name="gameSettings[<%= index %>][avgGame]" value="1" <%= row.avg_side === 1 ? 'checked' : '' %>></td>
+                        </tr>
+                        <% }) %>
+                    </table>
+                </form>
+            </div>
+            <div class="total_ceremony">
+                <form method="post" action="/queryCeremony">
+                    <input type="hidden" name="queryCeremonyGameName" value="<%= gameName %>">
+                    
+                    <table>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">팀 1등</th>
+                            <% team1st.forEach(function(member) { %>
+                                <td><%= member.userName %></td>
+                            <% }) %>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">총핀</th>
+                            <td colspan="<%= team1st.length %>"><%= pin1st[0]?.userName %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">슈퍼 히어로</th>
+                            <td colspan="<%= team1st.length %>"><%= superHero[0]?.userName %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">1군 1등</th>
+                            <td colspan="<%= team1st.length %>"><%= grade1st.grade1_1st[0] && grade1st.grade1_1st[0]?.userName || '' %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">2군 1등</th>
+                            <td colspan="<%= team1st.length %>"><%= grade1st.grade2_1st[0] && grade1st.grade2_1st[0]?.userName || '' %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">3군 1등</th>
+                            <td colspan="<%= team1st.length %>"><%= grade1st.grade3_1st[0] && grade1st.grade3_1st[0]?.userName || '' %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">4군 1등</th>
+                            <td colspan="<%= team1st.length %>"><%= grade1st.grade4_1st[0] && grade1st.grade4_1st[0]?.userName || '' %></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">남자 하이</th>
+                            <td colspan="<%= team1st.length %>"><%= manHigh?.userName || ''%></td>
+                        </tr>
+                        <tr>
+                            <th colspan="<%= team1st.length %>">여자 하이</th>
+                            <td colspan="<%= team1st.length %>"><%= womanHigh?.userName || ''%></td>
+                        </tr>
+                    </table>
+                    <% userName.forEach((row) =>{ %>
+                        <input type="hidden" name="CeremonyUserName" value="<%= row.userName %>">
+                    <% }) %>
+                </form>
+                
+            </div>
+            <div class="grade1_side">
+                <table>
+                    <tr>
+                        <th colspan="5">1군 판게임</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>4Game</th>
+                    </tr>
+                    <% for (let i = 0; i < 5; i++) { %>
+                        <tr>
+                            <th><%= i + 1 %>등</th>
+                            <td><%= grade1_side.grade1_side1[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side2[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side3[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side4[i]?.userName %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+            <div class="avg_side">
+                <table>
+                    <tr>
+                        <th colspan="8">에버 판게임</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>4Game</th>
+                    </tr>
+                    <% for (let i = 0; i < 7; i++) { %>
+                        <tr>
+                            <th><%= i + 1 %>등</th>
+                            <td><%= avgGame.avgGame1[i]?.userName %></td>
+                            <td><%= avgGame.avgGame2[i]?.userName %></td>
+                            <td><%= avgGame.avgGame3[i]?.userName %></td>
+                            <td><%= avgGame.avgGame4[i]?.userName %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+        </div>  
             <button id="show" class="btn3">점수 입력</button>
             <div class="background">
                 <div class="window">
@@ -263,10 +395,10 @@
             }
 
             function validateScores() {
-                var game1 = parseInt(document.getElementsByName('Game1')[0].value);
-                var game2 = parseInt(document.getElementsByName('Game2')[0].value);
-                var game3 = parseInt(document.getElementsByName('Game3')[0].value);
-                var game4 = parseInt(document.getElementsByName('Game4')[0].value);
+                var game1 = parseInt(document.getElementsByName('Game1')[0].value) || 0;
+                var game2 = parseInt(document.getElementsByName('Game2')[0].value) || 0;
+                var game3 = parseInt(document.getElementsByName('Game3')[0].value) || 0;
+                var game4 = parseInt(document.getElementsByName('Game4')[0].value) || 0;
                 
                 if (game1 === 0 && game2 === 0 && game3 === 0 && game4 === 0) {
                     alert('점수를 입력하세요.');
@@ -319,17 +451,19 @@
             ceremonyBtn.style.backgroundColor = "transparent";
             userTable.style.display = "block";
             teamScoreTable.style.display = "none";
-            
-        };
+            ceremonyTable.style.display = "none";
+            };
             const userScoreBtn = document.getElementById("userScore");
             const teamScoreBtn = document.getElementById("teamScore");
             const ceremonyBtn = document.getElementById("Ceremony");
             const userTable = document.querySelector(".user-table");
             const teamScoreTable = document.querySelector(".teamScore");
+            const ceremonyTable = document.querySelector(".ceremony");
 
             userScoreBtn.addEventListener("click", function() {
                 userTable.style.display = "block";
                 teamScoreTable.style.display = "none";
+                ceremonyTable.style.display = "none";
 
                 userScoreBtn.style.backgroundColor = "gray";
                 teamScoreBtn.style.backgroundColor = "transparent";
@@ -339,6 +473,7 @@
             teamScoreBtn.addEventListener("click", function() {
                 userTable.style.display = "none";
                 teamScoreTable.style.display = "block";
+                ceremonyTable.style.display = "none";
 
                 userScoreBtn.style.backgroundColor = "transparent";
                 teamScoreBtn.style.backgroundColor = "gray";
@@ -348,6 +483,7 @@
             ceremonyBtn.addEventListener("click", function() {
                 userTable.style.display = "none";
                 teamScoreTable.style.display = "none";
+                ceremonyTable.style.display = 'block';
 
                 userScoreBtn.style.backgroundColor = "transparent";
                 teamScoreBtn.style.backgroundColor = "transparent";

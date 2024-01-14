@@ -678,7 +678,13 @@ app.post('/saveDb', (req, res) => {
                                                           grade1_side4: grade1_side4
                                                         }
                                                         connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                          res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                          connection.query(`select management from member where memName = '${loggedName}' and management = 1;`, (error, management) =>{
+                                                            if(management.management == 1) {
+                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                            }else {
+                                                              res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                            }
+                                                          })
                                                         })
                                                       })
                                                     })
@@ -723,7 +729,6 @@ app.post('/login', (req, res) => {
                 const tableName = row[`Tables_in_allcover`]; // 테이블 이름 추출
                 return tableName !== 'member' && tableName !== 'scorebord' && tableName !== 'team_scoreboard'; // member와 scoreboard 테이블 제외
               });
-
               res.render('gameselect', { results: results, result: result, filteredTables: filteredTables });
             });
           }
@@ -1137,29 +1142,38 @@ app.post('/createGame', (req, res) => {
                                                               if(error){
                                                                 console.log(error)
                                                               }
-                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                              connection.query(`select * from member where memName = '${memName}' and management = 1;`, (error, management) =>{
+                                                                if(error){
+                                                                  console.log(error)
+                                                                }
+                                                                if(management.length == 1) {
+                                                                  res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                                }else {
+                                                                  res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                                }
                                                             })
-                                                          }
-                                                        })
-                                                      }
-                                                    })
+                                                          })
+                                                        }
+                                                      })
+                                                    }
                                                   })
                                                 })
                                               })
-                                            }
-                                          })
-                                        }
-                                      })
-                                    }
-                                  })
-                                }
-                              })
-                            }
-                          })
-                        }
-                      })
+                                            })
+                                          }
+                                        })
+                                      }
+                                    })
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
+                      }
                     })
                   })
+                })
 
 app.post('/joinGame', (req, res) => {
   const gameName = req.body.joinGame;
@@ -1555,7 +1569,16 @@ app.post('/joinGame', (req, res) => {
                                                         if(error){
                                                           console.log(error)
                                                         }
-                                                        res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                        connection.query(`select * from member where memName = '${memName}' and management = 1;`, (error, management) =>{
+                                                          if(error){
+                                                            console.log(error)
+                                                          }
+                                                          if(management.length == 1) {
+                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                          }else {
+                                                            res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                          }
+                                                        })
                                                       })
                                                     })
                                                   })
@@ -1948,27 +1971,36 @@ app.post('/teamJoin', (req, res) => {
                                                         if(error){
                                                           console.log(error)
                                                         }
-                                                        res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                        connection.query(`select * from member where memName = '${loggedName}' and management = 1;`, (error, management) =>{
+                                                          if(error){
+                                                            console.log(error)
+                                                          }
+                                                          if(management.length == 1) {
+                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                          }else {
+                                                            res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
+                                                          }
                                                       })
                                                     })
                                                   })
                                                 })
                                               })
-                                            }
-                                          })
-                                        }
-                                      })
-                                    }
-                                  })
-                                }
-                              })
-                            }
-                          })
-                        }
-                      })
-                    }
-                  })
+                                            })
+                                          }
+                                        })
+                                      }
+                                    })
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
+                      }
+                    })
+                  }
                 })
+              })
 })
 
 app.post('/resetTeam', (req, res) => {
