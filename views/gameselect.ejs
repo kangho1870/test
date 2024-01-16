@@ -10,21 +10,23 @@
     <div class="container">
       <div class="game-table">
         <div class="title">진행중인 게임</div>
-          <% filteredTables.forEach((rows, indexs) => { %>
-            <form action="/joinGame" method="post" id="joinForm">
-                <button type="submit" class="game-btn" data-table-name="<%= rows.Tables_in_allcover %>">
-                  <span><%= rows.Tables_in_allcover %></span>
-                </button>
-                <div class="layout"></div>
+        <% filteredTables.forEach((rows, indexs) => { %>
+          <% result.forEach((row, index) => { %>
+            <form action="/scoreboard/<%= row.memid %>/<%= row.gender %>" method="get" id="joinForm-<%= indexs %>">
+              <button type="submit" class="game-btn" data-table-name="<%= rows.Tables_in_allcover %>">
+                <span><%= rows.Tables_in_allcover %></span>
+              </button>
+              <div class="layout"></div>
               <input type="hidden" value="<%= rows.Tables_in_allcover %>" name="joinGame">
-              <% result.forEach((row, index) => { %>
               <input type="hidden" value="<%= row.memName %>" name="memName">
               <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
               <input type="hidden" value="<%= row.gender %>" name="memGender">
-              <% }) %>
+              <input type="hidden" value="<%= row.memid %>" name="memId">
             </form>
-          <% }); %>
+          <% }) %>
+        <% }); %>
       </div>
+    </div>
       <div class="createGame">
         <div class="title">게임 생성</div>
         <form action="/createGame" method="post">
@@ -33,6 +35,7 @@
           <% result.forEach((row, index) => { %>
             <input type="hidden" name="userName" value="<%= row.memName %>" >
             <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+            <input type="hidden" name="userId" value="<%= row.memid %>" >
             <input type="hidden" value="<%= row.gender %>" name="memGender">
             <% }); %>
             <p>
@@ -42,24 +45,38 @@
             <p>게임 생성 시 체크사항</p>
             <p>1. 게임이름은 숫자로 시작할 수 없습니다.</p>
             <p>2. 게임이름 사이의 공백을 허용하지 않습니다.</p>
-            <p>4. 게임이름에는 특수문자를 포함할 수 없습니다.</p>
+            <p>3. 게임이름에는 특수문자를 포함할 수 없습니다.</p>
             <p>진행중인 게임목록에서</p>
             <p>참가하고 싶은 게임의 버튼을 클릭하세요!</p>
           </div>
           </form>
       </div>
-    </div>
       <script>
-        const gameButtons = document.querySelectorAll('.game-button');
-        const joinForm = document.getElementById('joinForm');
-      
-        gameButtons.forEach(button => {
+        const gameButtons = document.querySelectorAll('.game-btn');
+
+        gameButtons.forEach((button, index) => {
           button.addEventListener('click', e => {
             e.preventDefault();
             const tableName = button.getAttribute('data-table-name');
-            const joinGameInput = document.querySelector('input[name="joinGame"]');
-            joinGameInput.value = tableName;
-            joinForm.submit();
+            const joinForm = button.closest(`#joinForm-${index}`);
+
+            if (joinForm) {
+              const joinGameInput = joinForm.querySelector('input[name="joinGame"]');
+              const memNameInput = joinForm.querySelector('input[name="memName"]');
+              const memAvgInput = joinForm.querySelector('input[name="memAvg"]');
+              const memGenderInput = joinForm.querySelector('input[name="memGender"]');
+              const memIdInput = joinForm.querySelector('input[name="memId"]');
+                      
+              joinGameInput.value = tableName;
+              memNameInput.value = memNameInput.value;
+              memAvgInput.value = memAvgInput.value;
+              memGenderInput.value = memGenderInput.value;
+              memIdInput.value = memIdInput.value;
+
+              joinForm.submit();
+            } else {
+              console.error(`joinForm-${index}을 찾을 수 없습니다.`);
+            }
           });
         });
         

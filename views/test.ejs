@@ -24,6 +24,8 @@
                     <input type="hidden" name="resetTeamuserName" value="<%= row.userName%>">
                 <% }) %>
                 <input type="hidden" name="resetTeamGameName" value="<%= gameName %>">
+                <input type="hidden" name="memId" value="<%= memid %>">
+                <input type="hidden" name="memGender" value="<%= memid %>">
                 <input type="submit" value="reset">
             </form>
         </div>
@@ -91,6 +93,8 @@
             <form method="post" action="/teamJoin">
                 <input type="hidden" name="teamNumber" value="<%= [i + 1] %>">
                 <input type="hidden" name="joinGameName" value="<%= gameName %>">
+                <input type="hidden" name="memId" value="<%= memid %>">
+                <input type="hidden" name="memGender" value="<%= memid %>">
                 <% userName.forEach((row, index) => { %>
                     <input type="hidden" name="joinGameuserName" value="<%= row.userName%>">
                     <input type="hidden" name="joinGameuseravg" value="<%= row.userAvg %>" >
@@ -140,9 +144,12 @@
             </table>
         </div>
         <div class="ceremony" style="display: none;">
+            <p>
             <div class="game_setting">
                 <form method="post" action="/gameSetting">
                     <input type="hidden" name="gameSettingGameName" value="<%= gameName %>">
+                    <input type="hidden" name="memId" value="<%= memid %>">
+                    <input type="hidden" name="memGender" value="<%= memid %>">
                     <% userName.forEach((row) =>{ %>
                         <input type="hidden" name="gameSettingUserName" value="<%= row.userName %>">
                     <% }) %>
@@ -178,10 +185,8 @@
                     <button type="submit">저장</button>
                 </form>
             </div>
+            </p>
             <div class="total_ceremony">
-                <form method="post" action="/queryCeremony">
-                    <input type="hidden" name="queryCeremonyGameName" value="<%= gameName %>">
-                    
                     <table>
                         <tr>
                             <th colspan="<%= team1st.length %>">총핀</th>
@@ -193,27 +198,63 @@
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">1군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade1_1st[0] && grade1st.grade1_1st[0]?.userName || '' %></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (grade1st.grade1_1st && grade1st.grade1_1st.length > 0) { %>
+                                    <%= grade1st.grade1_1st %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">2군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade2_1st[0] && grade1st.grade2_1st[0]?.userName || '' %></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (grade1st.grade2_1st && grade1st.grade2_1st.length > 0) { %>
+                                    <%= grade1st.grade2_1st %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">3군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade3_1st[0] && grade1st.grade3_1st[0]?.userName || '' %></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (grade1st.grade3_1st && grade1st.grade3_1st.length > 0) { %>
+                                    <%= grade1st.grade3_1st %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">4군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade4_1st[0] && grade1st.grade4_1st[0]?.userName || '' %></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (grade1st.grade4_1st && grade1st.grade4_1st.length > 0) { %>
+                                    <%= grade1st.grade4_1st[0].userName %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">남자 하이</th>
-                            <td colspan="<%= team1st.length %>"><%= manHigh[0]?.userName || ''%></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (manHigh && manHigh.length > 0) { %>
+                                    <%= manHigh[0].userName %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">여자 하이</th>
-                            <td colspan="<%= team1st.length %>"><%= womanHigh[0]?.userName || ''%></td>
+                            <td colspan="<%= team1st.length %>">
+                                <% if (womanHigh && womanHigh.length > 0) { %>
+                                    <%= womanHigh[0].userName %>
+                                <% } else { %>
+                                    
+                                <% } %>
+                            </td>
                         </tr>
                         <tr>
                             <th colspan="<%= team1st.length %>">팀 1등</th>
@@ -222,13 +263,8 @@
                             <% }) %>
                         </tr>
                     </table>
-                    <% userName.forEach((row) =>{ %>
-                        <input type="hidden" name="CeremonyUserName" value="<%= row.userName %>">
-                    <% }) %>
-                    <button type="submit">불러오기</button>
-                </form>
-                
             </div>
+            <p>
             <div class="grade1_side">
                 <table>
                     <tr>
@@ -252,6 +288,7 @@
                     <% } %>
                 </table>
             </div>
+            </p>
             <div class="avg_side">
                 <table>
                     <tr>
@@ -316,6 +353,8 @@
                             <% userName.forEach((row, index) => { %>
                             <input type="hidden" name="sessionName" value="<%= row.userName %>">
                             <input type="hidden" name="sessionAvg" value="<%= row.userAvg %>">
+                            <input type="hidden" name="memId" value="<%= memid %>">
+                            <input type="hidden" name="memGender" value="<%= memid %>">
                             <input type="hidden" name="db1Game" value="<%= row['1Game'] %>">
                             <input type="hidden" name="db2Game" value="<%= row['2Game'] %>">
                             <input type="hidden" name="db3Game" value="<%= row['3Game'] %>">

@@ -87,114 +87,463 @@ app.get('/member/:memid', (req, res) => {
     }
   });
 });
-// app.get('/test', (req, res) => {
-//   const gameName = req.body.joinGame;
-//   const memName = req.body.userName;
-//   const memAvg = req.body.userAvg;
-
-//   let teams = {
-//     teamScore1: [],
-//     teamScore2: [],
-//     teamScore3: [],
-//     teamScore4: [],
-//     teamScore5: [],
-//     teamScore6: [],
-//     teamScore7: []
-//   }
+app.get('/scoreboard/:memId/:memGender', (req, res) => {
+  const gameName = req.query.joinGame;
+  const memid = req.params.memId;
+  const memName = req.query.memName;
+  const memAvg = req.query.memAvg;
+  const memGender = req.params.memGender;
   
-//   connection.query(`select * from ${gameName} order by teamNumber`, (error, results5) => {
-//     if (error) {
-//       console.error(error);
-//       return;
-//     }
-  
-//     results5.forEach(result => {
-//       const { teamNumber } = result;
-//       switch (teamNumber) {
-//         case 1:
-//           teams.teamScore1.push(result);
-//           break;
-//         case 2:
-//           teams.teamScore2.push(result);
-//           break;
-//         case 3:
-//           teams.teamScore3.push(result);
-//           break;
-//         case 4:
-//           teams.teamScore4.push(result);
-//           break;
-//         case 5:
-//           teams.teamScore5.push(result);
-//           break;
-//         case 6:
-//           teams.teamScore6.push(result);
-//           break;
-//         case 7:
-//           teams.teamScore7.push(result);
-//           break;
-//         default:
-//           // 예외 처리: 팀 번호가 1에서 7 사이의 값이 아닌 경우
-//           console.warn(`잘못된 팀 번호: ${teamNumber}`);
-//       }
-//     });
-//     res.render('test')
-//   })
+  console.log(memid)
+  console.log(gameName)
+  console.log(memName)
 
-//   let teamScores = {
-//     team1: [],
-//     team2: [],
-//     team3: [],
-//     team4: [],
-//     team5: [],
-//     team6: [],
-//     team7: []
-//   }
-//   connection.query(`SELECT teamNumber, SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-//     SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-//     SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-//     SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-//     FROM ${gameName}
-//     GROUP BY teamNumber
-//     ORDER BY teamNumber;`, (error, result3) => {
-//       if(error){
-//         console.log(error)
-//         return;
-//       }
-//       result3.forEach(result => {
-//         const { teamNumber } = result;
-//         switch (teamNumber) {
-//           case 1:
-//             teamScores.team1.push(result);
-//             break;
-//           case 2:
-//             teamScores.team2.push(result);
-//             break;
-//           case 3:
-//             teamScores.team3.push(result);
-//             break;
-//           case 4:
-//             teamScores.team4.push(result);
-//             break;
-//           case 5:
-//             teamScores.team5.push(result);
-//             break;
-//           case 6:
-//             teamScores.team6.push(result);
-//             break;
-//           case 7:
-//             teamScores.team7.push(result);
-//             break;
-//           default:
-//             console.warn(`잘못된 팀 번호: ${teamNumber}`);
-//         }
-//       })
-//     })
-//   })
+  connection.query(`select * from ${gameName} WHERE userName = ?`, [memName], (error, rows) => {
+    if (error) {
+      throw error;
+    }
+
+    if (rows.length > 0) {
+      connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${memName}'`, (error, result) => {
+        if (error) {
+          throw error;
+        }
+      })
+    }else {
+      connection.query(`insert into ${gameName} (userName, userAvg, gender) values (?, ?, ?)`, [memName, memAvg, memGender], (error, result) => {
+        if (error) {
+          throw error;
+        }
+      })
+    }
+    let teams = {
+    teamScore1: [],
+    teamScore2: [],
+    teamScore3: [],
+    teamScore4: [],
+    teamScore5: [],
+    teamScore6: [],
+    teamScore7: []
+    }
+  
+    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
+      if (error) {
+        console.error(error);
+        return;
+      }
+    
+      results5.forEach(result => {
+        const { teamNumber } = result;
+        switch (teamNumber) {
+          case 1:
+            teams.teamScore1.push(result);
+            break;
+          case 2:
+            teams.teamScore2.push(result);
+            break;
+          case 3:
+            teams.teamScore3.push(result);
+            break;
+          case 4:
+            teams.teamScore4.push(result);
+            break;
+          case 5:
+            teams.teamScore5.push(result);
+            break;
+          case 6:
+            teams.teamScore6.push(result);
+            break;
+          case 7:
+            teams.teamScore7.push(result);
+            break;
+        }
+      });
+    })
+
+    let teamScores = {
+      team1: [],
+      team2: [],
+      team3: [],
+      team4: [],
+      team5: [],
+      team6: [],
+      team7: []
+    }
+    connection.query(`
+      SELECT teamNumber,
+        sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
+        SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
+        SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
+        SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
+        SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
+      FROM ${gameName}
+      GROUP BY teamNumber
+      ORDER BY teamNumber;`, (error, result3) => {
+        if(error){
+          console.log(error)
+        }
+        result3.forEach(result => {
+          const { teamNumber } = result;
+          switch (teamNumber) {
+            case 1:
+              teamScores.team1.push(result);
+              break;
+            case 2:
+              teamScores.team2.push(result);
+              break;
+            case 3:
+              teamScores.team3.push(result);
+              break;
+            case 4:
+              teamScores.team4.push(result);
+              break;
+            case 5:
+              teamScores.team5.push(result);
+              break;
+            case 6:
+              teamScores.team6.push(result);
+              break;
+            case 7:
+              teamScores.team7.push(result);
+              break;
+          }
+        })
+      })
+      let pin1st = [];
+      connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
+        if(error){
+          console.log(error)
+        }
+        pin1st = result;
+        var pin1stName = pin1st[0].userName;
+        
+          let superHero = []
+          connection.query(`
+            SELECT userName, 
+              (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
+            FROM ${gameName}
+            ORDER BY avgTotal DESC
+            LIMIT 1;
+            `, (error, result) => {
+            if(error) {
+              console.log(error)
+            }
+            superHero = result
+    
+            console.log('슈퍼히어로')
+    
+            let grade1st = {
+              grade1_1st: [],
+              grade2_1st: [],
+              grade3_1st: [],
+              grade4_1st: []
+            };
+    
+            connection.query(`
+              SELECT userName, 
+                (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
+              FROM ${gameName}
+              WHERE grade = 1 AND userName NOT IN ('${pin1stName}')
+              ORDER BY avgTotal DESC
+              LIMIT 1;
+              `, (error, result) =>{
+              if(error){
+                console.log(error)
+              }
+              if(result && result.length > 0) {
+                grade1st.grade1_1st = result[0].userName
+                console.log(grade1st.grade1_1st)
+              }
+    
+              connection.query(`
+                SELECT userName, 
+                  (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
+                FROM ${gameName}
+                WHERE grade = 2 AND userName NOT IN ('${pin1st}')
+                ORDER BY avgTotal DESC
+                LIMIT 1;
+              `, (error, result) =>{
+                if(error){
+                  console.log(error)
+                }
+                if(result && result.length > 0) {
+                  grade1st.grade2_1st = result[0].userName
+                  console.log(grade1st.grade2_1st)
+                }
+    
+                connection.query(`
+                  SELECT userName, 
+                    (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
+                  FROM ${gameName}
+                  WHERE grade = 3 AND userName NOT IN ('${pin1st}')
+                  ORDER BY avgTotal DESC
+                  LIMIT 1;
+                `, (error, result) =>{
+                  if(error){
+                    console.log(error)
+                  }
+                  if(result && result.length > 0) {
+                    grade1st.grade3_1st = result[0].userName
+                  }
+                  console.log(grade1st.grade3_1st)
+    
+                  connection.query(`
+                    SELECT userName, 
+                      (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
+                    FROM ${gameName}
+                    WHERE grade = 4 AND userName NOT IN ('${pin1st}')
+                    ORDER BY avgTotal DESC
+                    LIMIT 1;
+                  `, (error, result) =>{
+                    if(error){
+                      console.log(error)
+                    }
+                    if(result && result.length > 0) {
+                      grade1st.grade4_1st = result[0].userName
+                    }
+    
+                    console.log('남자하이 시작 전')
+    
+                    let manHigh = []
+                    connection.query(`
+                      SELECT userName
+                      FROM ${gameName}
+                      WHERE 
+                        gender = 1 AND 
+                        userName NOT IN (
+                          '${pin1st}', 
+                          '${grade1st.grade1_1st}', 
+                          '${grade1st.grade2_1st}', 
+                          '${grade1st.grade3_1st}', 
+                          '${grade1st.grade4_1st}'
+                          ) AND 
+                          (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
+                      ORDER BY userHigh DESC
+                      LIMIT 1;
+                      `, (error, result) => {
+                      if (error) {
+                        console.log(error)
+                      }
+                      if (result && result.length > 0) {
+                        manHigh = result[0].userName
+                      }
+                          let womanHigh = []
+                          connection.query(`
+                          SELECT userName
+                          FROM ${gameName}
+                          WHERE 
+                            gender = 2 AND 
+                            userName NOT IN (
+                              '${pin1st}', 
+                              '${grade1st.grade1_1st}', 
+                              '${grade1st.grade2_1st}', 
+                              '${grade1st.grade3_1st}', 
+                              '${grade1st.grade4_1st}'
+                              ) AND 
+                              (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
+                          ORDER BY userHigh DESC
+                          LIMIT 1;
+                          `, (error, result) => {
+                            if (error) {
+                              console.log(error)
+                            }
+                            if (result && result.length > 0) {
+                              womanHigh = result[0].userName
+                            } else {
+                              womanHigh = null;
+                            }
+                          })
+  let team1st = []
+  connection.query(`
+  SELECT t1.teamNumber,
+    t1.teamSum,
+    t1.teamRank,
+    t2.userName
+  FROM (
+        SELECT teamNumber,
+              teamSum,
+              ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
+        FROM (
+            SELECT teamNumber,
+                  SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
+            FROM ${gameName}
+            WHERE teamNumber BETWEEN 1 AND 7
+            GROUP BY teamNumber
+        ) AS subquery
+  ) AS t1
+  JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
+  WHERE t1.teamRank = 1;
+  `, (error, result) =>{
+    if(error){
+      console.log(error)
+    }
+    team1st = result
+  })
+connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
+  if (error) {
+    throw error;
+  } else {
+    connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
+      if (error) {
+        throw error;
+      }else {
+        connection.query(`
+          SELECT 
+            teamNumber, 
+            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
+            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
+            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
+            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
+            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
+          FROM ${gameName}
+          WHERE teamNumber BETWEEN 1 AND 7
+          GROUP BY teamNumber;
+          `, (error, teamRank) =>{
+            if(error){
+              throw error
+            }else {
+              connection.query(`
+                SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
+                FROM ${gameName}
+                WHERE avg_side = 1
+                ORDER BY 1Game_P_M desc
+                limit 7;
+                `, (error, avgGame1) =>{
+                  if(error){
+                    console.log(error)
+                  }else {
+                    connection.query(`
+                      SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
+                      FROM ${gameName}
+                      WHERE avg_side = 1
+                      ORDER BY 2Game_P_M desc
+                      limit 7;
+                      `, (error, avgGame2) =>{
+                        if(error){
+                          console.log(error)
+                        }else{
+                          connection.query(`
+                            SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
+                            FROM ${gameName}
+                            WHERE avg_side = 1
+                            ORDER BY 3Game_P_M desc
+                              limit 7;
+                            `, (error, avgGame3) =>{
+                              if(error){
+                                console.log(error)
+                              }else{
+                                connection.query(`
+                                  SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
+                                  FROM ${gameName}
+                                  WHERE avg_side = 1
+                                  ORDER BY 4Game_P_M desc
+                                    limit 7;
+                                  `, (error, avgGame4) =>{
+                                    if(error){
+                                      console.log(error)
+                                    }else {
+                                      connection.query(`
+                                        SELECT 
+                                          userName,
+                                          RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
+                                        FROM ${gameName}
+                                          WHERE grade1_side = 1
+                                          ORDER BY 1Game_Rank, userName;
+                                        `,(error, grade1_side1) =>{
+                                          if(error){
+                                            console.log(error)
+                                            }
+                                            connection.query(`
+                                              SELECT 
+                                                userName,
+                                                RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
+                                              FROM ${gameName}
+                                                WHERE grade1_side = 1
+                                                ORDER BY 2Game_Rank, userName;
+                                              `,(error, grade1_side2) =>{
+                                                if(error){
+                                                  console.log(error)
+                                                }
+                                                connection.query(`
+                                                  SELECT 
+                                                    userName,
+                                                    RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
+                                                  FROM ${gameName}
+                                                    WHERE grade1_side = 1
+                                                    ORDER BY 3Game_Rank, userName;
+                                                  `,(error, grade1_side3) =>{
+                                                    if(error){
+                                                      console.log(error)
+                                                    }
+                                                    connection.query(`
+                                                      SELECT 
+                                                        userName,
+                                                        RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
+                                                      FROM ${gameName}
+                                                        WHERE grade1_side = 1
+                                                        ORDER BY 4Game_Rank, userName;
+                                                      `,(error, grade1_side4) =>{
+                                                        if(error){
+                                                          console.log(error)
+                                                        }
+                                                        let avgGame = {
+                                                          avgGame1: avgGame1,
+                                                          avgGame2: avgGame2,
+                                                          avgGame3: avgGame3,
+                                                          avgGame4: avgGame4
+                                                        };
+                                                        let grade1_side = {
+                                                          grade1_side1: grade1_side1,
+                                                          grade1_side2: grade1_side2,
+                                                          grade1_side3: grade1_side3,
+                                                          grade1_side4: grade1_side4
+                                                        }
+                                                        connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
+                                                          connection.query(`select management from member where memid = '${memid}' and management = 1;`, (error, management) =>{
+                                                            if(management.length == 1) {
+                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender});
+                                                            }else {
+                                                              res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender});
+                                                            }
+                                                          })
+                                                        })
+                                                      })
+                                                    })
+                                                  })
+                                                })
+                                              }
+                                            })
+                                          }
+                                        })
+                                      }
+                                    })
+                                  }
+                                })
+                              }
+                            })
+                          }
+                        })
+                      }
+                    })
+                  })
+                })
+              })
+            })
+          })
+        })
+    })
+  })
+})
 
 app.post('/saveDb', (req, res) => {
   const gameName = req.body.gameName
   const loggedName = req.body.sessionName;
   const memAvg = req.body.sessionAvg;
+  const memId = req.body.memId;
+  const memGender = req.body.memGender
   const game1 = req.body.Game1 || 0;
   const game2 = req.body.Game2 || 0;
   const game3 = req.body.Game3 || 0;
@@ -203,7 +552,7 @@ app.post('/saveDb', (req, res) => {
   const db2Game = req.body.db2Game || 0;
   const db3Game = req.body.db3Game || 0;
   const db4Game = req.body.db4Game || 0;
-
+  const redirectPath = `/scoreboard/${memId}/${memGender}?joinGame=${encodeURIComponent(gameName)}&memName=${encodeURIComponent(loggedName)}`
   
   let game1PM = 0;
   let game2PM = 0;
@@ -317,366 +666,11 @@ app.post('/saveDb', (req, res) => {
             console.error('MySQL 데이터 삽입 오류:', error);
             res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
         }
+        
       });
   }
-  
-  let teams = {
-    teamScore1: [],
-    teamScore2: [],
-    teamScore3: [],
-    teamScore4: [],
-    teamScore5: [],
-    teamScore6: [],
-    teamScore7: []
-  }
-  
-  connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-  
-    results5.forEach(result => {
-      const { teamNumber } = result;
-      switch (teamNumber) {
-        case 1:
-          teams.teamScore1.push(result);
-          break;
-        case 2:
-          teams.teamScore2.push(result);
-          break;
-        case 3:
-          teams.teamScore3.push(result);
-          break;
-        case 4:
-          teams.teamScore4.push(result);
-          break;
-        case 5:
-          teams.teamScore5.push(result);
-          break;
-        case 6:
-          teams.teamScore6.push(result);
-          break;
-        case 7:
-          teams.teamScore7.push(result);
-          break;
-      }
-    });
-  })
-
-  let teamScores = {
-    team1: [],
-    team2: [],
-    team3: [],
-    team4: [],
-    team5: [],
-    team6: [],
-    team7: []
-  }
-  connection.query(`SELECT teamNumber,
-    sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-    SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-    SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-    SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-    SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-    FROM ${gameName}
-    GROUP BY teamNumber
-    ORDER BY teamNumber;`, (error, result3) => {
-      if(error){
-        console.log(error)
-      }
-      result3.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teamScores.team1.push(result);
-            break;
-          case 2:
-            teamScores.team2.push(result);
-            break;
-          case 3:
-            teamScores.team3.push(result);
-            break;
-          case 4:
-            teamScores.team4.push(result);
-            break;
-          case 5:
-            teamScores.team5.push(result);
-            break;
-          case 6:
-            teamScores.team6.push(result);
-            break;
-          case 7:
-            teamScores.team7.push(result);
-            break;
-        }
-      })
-    })
-    let pin1st = [];
-    connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      pin1st = result;
-    })
-    
-    let superHero = []
-    connection.query(`
-      SELECT userName, 
-        (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-      FROM ${gameName}
-      ORDER BY avgTotal DESC
-      LIMIT 1;
-    `, (error, result) => {
-      if(error) {
-        console.log(error)
-      }
-      superHero = result
-    })
-    let grade1st = {
-      grade1_1st: [],
-      grade2_1st: [],
-      grade3_1st: [],
-      grade4_1st: []
-    };
-
-    for (let n = 0; n < 4; n++) {
-      (function (n) {
-        connection.query(`
-          SELECT userName, 
-            (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-          FROM ${gameName}
-          WHERE grade = ${n + 1}
-          ORDER BY avgTotal DESC
-          LIMIT 1;
-        `, (error, results) => {
-          if (error) {
-            console.log(error);
-          }
-          switch (n) {
-            case 0:
-              grade1st.grade1_1st = results;
-              break;
-            case 1:
-              grade1st.grade2_1st = results;
-              break;
-            case 2:
-              grade1st.grade3_1st = results;
-              break;
-            case 3:
-              grade1st.grade4_1st = results;
-              break;
-            default:
-              break;
-          }
-        });
-      })(n);
-    }
-    let manHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result.length > 0) {
-        manHigh = result
-      }
-    })
-    let womanHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result.length > 0) {
-        womanHigh = result
-      }
-    })
-    let team1st = []
-    connection.query(`
-    SELECT t1.teamNumber,
-       t1.teamSum,
-       t1.teamRank,
-       t2.userName
-    FROM (
-        SELECT teamNumber,
-              teamSum,
-              ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-        FROM (
-            SELECT teamNumber,
-                  SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber
-        ) AS subquery
-    ) AS t1
-    JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-    WHERE t1.teamRank = 1;
-    `, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      team1st = result
-    })
-    connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${loggedName}'`, (error, result) => {
-      if (error) {
-        throw error;
-      } else {
-        connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-          if (error) {
-            throw error;
-          }else {
-            connection.query(`
-              SELECT teamNumber, 
-              SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-              SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-              SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-              SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-              RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-              RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-              RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-              RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-              FROM ${gameName}
-              WHERE teamNumber BETWEEN 1 AND 7
-              GROUP BY teamNumber;
-            `, (error, teamRank) =>{
-              if(error){
-                throw error
-              }else {
-                connection.query(`
-                SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-                FROM ${gameName}
-                WHERE avg_side = 1
-                ORDER BY 1Game_P_M desc
-                    limit 7;
-                  `, (error, avgGame1) =>{
-                    if(error){
-                      console.log(error)
-                    }else {
-                      connection.query(`
-                        SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                        limit 7;
-                      `, (error, avgGame2) =>{
-                        if(error){
-                          console.log(error)
-                        }else{
-                          connection.query(`
-                            SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                            ORDER BY 3Game_P_M desc
-                              limit 7;
-                            `, (error, avgGame3) =>{
-                              if(error){
-                                console.log(error)
-                              }else{
-                                connection.query(`
-                                  SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                                  FROM ${gameName}
-                                  WHERE avg_side = 1
-                                  ORDER BY 4Game_P_M desc
-                                    limit 7;
-                                  `, (error, avgGame4) =>{
-                                    if(error){
-                                      console.log(error)
-                                    }else {
-                                      connection.query(`
-                                        SELECT 
-                                          userName,
-                                          RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                        FROM ${gameName}
-                                          WHERE grade1_side = 1
-                                          ORDER BY 1Game_Rank, userName;
-                                        `,(error, grade1_side1) =>{
-                                          if(error){
-                                            console.log(error)
-                                            }
-                                            connection.query(`
-                                              SELECT 
-                                                userName,
-                                                RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                              FROM ${gameName}
-                                                WHERE grade1_side = 1
-                                                ORDER BY 2Game_Rank, userName;
-                                              `,(error, grade1_side2) =>{
-                                                if(error){
-                                                  console.log(error)
-                                                }
-                                                connection.query(`
-                                                  SELECT 
-                                                    userName,
-                                                    RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                                  FROM ${gameName}
-                                                    WHERE grade1_side = 1
-                                                    ORDER BY 3Game_Rank, userName;
-                                                  `,(error, grade1_side3) =>{
-                                                    if(error){
-                                                      console.log(error)
-                                                    }
-                                                    connection.query(`
-                                                      SELECT 
-                                                        userName,
-                                                        RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                      FROM ${gameName}
-                                                        WHERE grade1_side = 1
-                                                        ORDER BY 4Game_Rank, userName;
-                                                      `,(error, grade1_side4) =>{
-                                                        if(error){
-                                                          console.log(error)
-                                                        }
-                                                        let avgGame = {
-                                                          avgGame1: avgGame1,
-                                                          avgGame2: avgGame2,
-                                                          avgGame3: avgGame3,
-                                                          avgGame4: avgGame4
-                                                        };
-                                                        let grade1_side = {
-                                                          grade1_side1: grade1_side1,
-                                                          grade1_side2: grade1_side2,
-                                                          grade1_side3: grade1_side3,
-                                                          grade1_side4: grade1_side4
-                                                        }
-                                                        connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                          connection.query(`select management from member where memName = '${loggedName}' and management = 1;`, (error, management) =>{
-                                                            if(management.length == 1) {
-                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                            }else {
-                                                              res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                            }
-                                                          })
-                                                        })
-                                                      })
-                                                    })
-                                                  })
-                                                })
-                                              }
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  })
+  res.redirect(redirectPath);
+})
 // 로그인 gameselect 렌더링
 app.post('/login', (req, res) => {
   const userName = req.body.userName;
@@ -715,10 +709,10 @@ app.post('/createGame', (req, res) => {
   const gameName = req.body.gameName;
   const memName = req.body.userName;
   const memAvg = req.body.userAvg;
+  const memId = req.body.userId;
   const memGender = req.body.memGender;
-  console.log(gameName)
-  console.log(memName)
-  console.log(memAvg)
+  const redirectPath = `/scoreboard/${memId}/${memGender}?joinGame=${encodeURIComponent(gameName)}&memName=${encodeURIComponent(memName)}`
+
 
   const checkTableQuery = `SHOW TABLES LIKE '${gameName}'`;
   connection.query(checkTableQuery, (error, results) => {
@@ -728,1318 +722,77 @@ app.post('/createGame', (req, res) => {
       return;
     }
 
-  if (results.length > 0) {
-    console.log('이미 존재하는 게임입니다.');
-    res.status(400).send(`<script>alert('이미 존재하는 게임입니다.')</script>`);
-    return;
-  }else {
-    const createTableQuery = `CREATE TABLE ${gameName} (userName varchar(5), userAvg int, grade int, gender int, 1Game int, 1Game_P_M varchar(20), 2Game int, 2Game_P_M varchar(20), 3Game int, 3Game_P_M varchar(20), 4Game int, 4Game_P_M varchar(20), userThisAvg float, userTotal int, userHigh int, userLow int, teamNumber int, checking int, grade1_side int, avg_side int)`;
-    connection.query(createTableQuery, (error, results) => {
-      if (error) {
-        console.error('테이블 생성 실패:', error);
-        res.status(500).send('테이블 생성에 실패했습니다.');
-        return;
-      }
-      const insertUserQuery = `INSERT INTO ${gameName} (userName, userAvg, gender) VALUES (?, ?, ?)`;
-      connection.query(insertUserQuery, [memName, memAvg, memGender], (error, results) => {
+    if (results.length > 0) {
+      console.log('이미 존재하는 게임입니다.');
+      res.status(400).send(`<script>alert('이미 존재하는 게임입니다.')</script>`);
+      return;
+    }else {
+      const createTableQuery = `CREATE TABLE ${gameName} (userName varchar(5), userAvg int, grade int, gender int, 1Game int, 1Game_P_M varchar(20), 2Game int, 2Game_P_M varchar(20), 3Game int, 3Game_P_M varchar(20), 4Game int, 4Game_P_M varchar(20), userThisAvg float, userTotal int, userHigh int, userLow int, teamNumber int, checking int, grade1_side int, avg_side int)`;
+      connection.query(createTableQuery, (error, results) => {
         if (error) {
-          console.error('사용자 추가 실패:', error);
-          res.status(500).send('사용자 추가에 실패했습니다.');
+          console.error('테이블 생성 실패:', error);
+          res.status(500).send('테이블 생성에 실패했습니다.');
           return;
         }
-        console.log('테이블이 성공적으로 생성되었습니다.');
-        console.log('사용자가 성공적으로 추가되었습니다.');
-      })
-    })
-  }
-    let teams = {
-      teamScore1: [],
-      teamScore2: [],
-      teamScore3: [],
-      teamScore4: [],
-      teamScore5: [],
-      teamScore6: [],
-      teamScore7: []
-    }
-    
-    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-    
-      results5.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teams.teamScore1.push(result);
-            break;
-          case 2:
-            teams.teamScore2.push(result);
-            break;
-          case 3:
-            teams.teamScore3.push(result);
-            break;
-          case 4:
-            teams.teamScore4.push(result);
-            break;
-          case 5:
-            teams.teamScore5.push(result);
-            break;
-          case 6:
-            teams.teamScore6.push(result);
-            break;
-          case 7:
-            teams.teamScore7.push(result);
-            break;
-        }
-      });
-    })
-  
-    let teamScores = {
-      team1: [],
-      team2: [],
-      team3: [],
-      team4: [],
-      team5: [],
-      team6: [],
-      team7: []
-    }
-    connection.query(`SELECT teamNumber,
-      sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-      SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-      SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-      SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-      SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-      FROM ${gameName}
-      GROUP BY teamNumber
-      ORDER BY teamNumber;`, (error, result3) => {
-        if(error){
-          console.log(error)
-        }
-        result3.forEach(result => {
-          const { teamNumber } = result;
-          switch (teamNumber) {
-            case 1:
-              teamScores.team1.push(result);
-              break;
-            case 2:
-              teamScores.team2.push(result);
-              break;
-            case 3:
-              teamScores.team3.push(result);
-              break;
-            case 4:
-              teamScores.team4.push(result);
-              break;
-            case 5:
-              teamScores.team5.push(result);
-              break;
-            case 6:
-              teamScores.team6.push(result);
-              break;
-            case 7:
-              teamScores.team7.push(result);
-              break;
+        const insertUserQuery = `INSERT INTO ${gameName} (userName, userAvg, gender) VALUES (?, ?, ?)`;
+        connection.query(insertUserQuery, [memName, memAvg, memGender], (error, results) => {
+          if (error) {
+            console.error('사용자 추가 실패:', error);
+            res.status(500).send('사용자 추가에 실패했습니다.');
+            return;
           }
+          console.log('테이블이 성공적으로 생성되었습니다.');
+          console.log('사용자가 성공적으로 추가되었습니다.');
+
+          res.redirect(redirectPath);
         })
       })
-      let pin1st = [];
-      connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        pin1st = result;
-      })
-      let superHero = []
-      connection.query(`
-        SELECT userName, 
-          (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-        FROM ${gameName}
-        ORDER BY avgTotal DESC
-        LIMIT 1;
-      `, (error, result) => {
-        if(error) {
-          console.log(error)
-        }
-        superHero = result
-      })
-      let grade1st = {
-        grade1_1st: [],
-        grade2_1st: [],
-        grade3_1st: [],
-        grade4_1st: []
-      };
-  
-      for (let n = 0; n < 4; n++) {
-        (function (n) {
-          connection.query(`
-            SELECT userName, 
-              (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-            FROM ${gameName}
-            WHERE grade = ${n + 1}
-            ORDER BY avgTotal DESC
-            LIMIT 1;
-          `, (error, results) => {
-            if (error) {
-              console.log(error);
-            }
-            switch (n) {
-              case 0:
-                grade1st.grade1_1st = results;
-                break;
-              case 1:
-                grade1st.grade2_1st = results;
-                break;
-              case 2:
-                grade1st.grade3_1st = results;
-                break;
-              case 3:
-                grade1st.grade4_1st = results;
-                break;
-              default:
-                break;
-            }
-          });
-        })(n);
-      }
-      let manHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          manHigh = result[0].userName
-        }
-      })
-      let womanHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          womanHigh = result[0].userName
-        }
-      })
-      let team1st = []
-      connection.query(`
-      SELECT t1.teamNumber,
-         t1.teamSum,
-         t1.teamRank,
-         t2.userName
-      FROM (
-          SELECT teamNumber,
-                teamSum,
-                ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-          FROM (
-              SELECT teamNumber,
-                    SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-              FROM ${gameName}
-              WHERE teamNumber BETWEEN 1 AND 7
-              GROUP BY teamNumber
-          ) AS subquery
-      ) AS t1
-      JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-      WHERE t1.teamRank = 1;
-      `, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        team1st = result
-      })
-
-  
-      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-        if (error) {
-          throw error;
-        }else {
-          connection.query(`
-            SELECT teamNumber, 
-            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber;
-          `, (error, teamRank) =>{
-            if(error){
-              throw error
-            }else {
-              connection.query(`
-                SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-                FROM ${gameName}
-                WHERE avg_side = 1
-                ORDER BY 1Game_P_M desc
-                  limit 7;
-                `, (error, avgGame1) =>{
-                  if(error){
-                    console.log(error)
-                  }else {
-                    connection.query(`
-                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                      limit 7;
-                    `, (error, avgGame2) =>{
-                      if(error){
-                        console.log(error)
-                      }else{
-                        connection.query(`
-                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 3Game_P_M desc
-                            limit 7;
-                          `, (error, avgGame3) =>{
-                            if(error){
-                              console.log(error)
-                            }else{
-                              connection.query(`
-                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                              FROM ${gameName}
-                              WHERE avg_side = 1
-                              ORDER BY 4Game_P_M desc
-                                  limit 7;
-                                `, (error, avgGame4) =>{
-                                  if(error){
-                                    console.log(error)
-                                  }else {
-                                    connection.query(`
-                                      SELECT 
-                                        userName,
-                                        RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                      FROM ${gameName}
-                                        WHERE grade1_side = 1
-                                        ORDER BY 1Game_Rank, userName;
-                                      `,(error, grade1_side1) =>{
-                                        if(error){
-                                          console.log(error)
-                                          }
-                                          connection.query(`
-                                            SELECT 
-                                              userName,
-                                              RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                            FROM ${gameName}
-                                              WHERE grade1_side = 1
-                                              ORDER BY 2Game_Rank, userName;
-                                            `,(error, grade1_side2) =>{
-                                              if(error){
-                                                console.log(error)
-                                              }
-                                              connection.query(`
-                                                SELECT 
-                                                  userName,
-                                                  RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                                FROM ${gameName}
-                                                  WHERE grade1_side = 1
-                                                  ORDER BY 3Game_Rank, userName;
-                                                `,(error, grade1_side3) =>{
-                                                  if(error){
-                                                    console.log(error)
-                                                  }
-                                                  connection.query(`
-                                                    SELECT 
-                                                      userName,
-                                                      RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                    FROM ${gameName}
-                                                      WHERE grade1_side = 1
-                                                      ORDER BY 4Game_Rank, userName;
-                                                    `,(error, grade1_side4) =>{
-                                                      if(error){
-                                                        console.log(error)
-                                                      }else {
-                                                        connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result)=>{
-                                                          if(error){
-                                                            console.log(error)
-                                                          }else {
-                                                            let avgGame = {
-                                                              avgGame1: avgGame1 || 'x',
-                                                              avgGame2: avgGame2 || 'x',
-                                                              avgGame3: avgGame3 || 'x',
-                                                              avgGame4: avgGame4 || 'x'
-                                                            };
-                                                            let grade1_side = {
-                                                              grade1_side1: grade1_side1 || 'x',
-                                                              grade1_side2: grade1_side2 || 'x',
-                                                              grade1_side3: grade1_side3 || 'x',
-                                                              grade1_side4: grade1_side4 || 'x'
-                                                            }
-                                                            connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                              if(error){
-                                                                console.log(error)
-                                                              }
-                                                              connection.query(`select * from member where memName = '${memName}' and management = 1;`, (error, management) =>{
-                                                                if(error){
-                                                                  console.log(error)
-                                                                }
-                                                                if(management.length == 1) {
-                                                                  res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                                }else {
-                                                                  res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                                }
-                                                            })
-                                                          })
-                                                        }
-                                                      })
-                                                    }
-                                                  })
-                                                })
-                                              })
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  })
-                })
-
-app.post('/joinGame', (req, res) => {
-  const gameName = req.body.joinGame;
-  const memName = req.body.memName;
-  const memAvg = req.body.memAvg;
-  const memGender = req.body.memGender;
-
-  connection.query(`select * from ${gameName} WHERE userName = ?`, [memName], (error, rows) => {
-    if (error) {
-      throw error;
     }
-
-    if (rows.length > 0) {
-      connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${memName}'`, (error, result) => {
-        if (error) {
-          throw error;
-        }
-      })
-    }else {
-      connection.query(`insert into ${gameName} (userName, userAvg, gender) values (?, ?, ?)`, [memName, memAvg, memGender], (error, result) => {
-        if (error) {
-          throw error;
-        }
-      })
-    }
-
-    let teams = {
-      teamScore1: [],
-      teamScore2: [],
-      teamScore3: [],
-      teamScore4: [],
-      teamScore5: [],
-      teamScore6: [],
-      teamScore7: []
-    }
+  })
+})
     
-    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-    
-      results5.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teams.teamScore1.push(result);
-            break;
-          case 2:
-            teams.teamScore2.push(result);
-            break;
-          case 3:
-            teams.teamScore3.push(result);
-            break;
-          case 4:
-            teams.teamScore4.push(result);
-            break;
-          case 5:
-            teams.teamScore5.push(result);
-            break;
-          case 6:
-            teams.teamScore6.push(result);
-            break;
-          case 7:
-            teams.teamScore7.push(result);
-            break;
-        }
-      });
-    })
-    console.log(teams)
-    let teamScores = {
-      team1: [],
-      team2: [],
-      team3: [],
-      team4: [],
-      team5: [],
-      team6: [],
-      team7: []
-    }
-    connection.query(`SELECT teamNumber,
-      sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-      SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-      SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-      SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-      SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-      FROM ${gameName}
-      GROUP BY teamNumber
-      ORDER BY teamNumber;`, (error, result3) => {
-        if(error){
-          console.log(error)
-        }
-        result3.forEach(result => {
-          const { teamNumber } = result;
-          switch (teamNumber) {
-            case 1:
-              teamScores.team1.push(result);
-              break;
-            case 2:
-              teamScores.team2.push(result);
-              break;
-            case 3:
-              teamScores.team3.push(result);
-              break;
-            case 4:
-              teamScores.team4.push(result);
-              break;
-            case 5:
-              teamScores.team5.push(result);
-              break;
-            case 6:
-              teamScores.team6.push(result);
-              break;
-            case 7:
-              teamScores.team7.push(result);
-              break;
-          }
-        })
-      })
-      let pin1st = [];
-      connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        pin1st = result;
-      })
-      var userName = pin1st
-      connection.query(`update ${gameName} set checking = 1 where userName = '${userName}'`, (error,result) =>{
-        if(error){
-          console.log(error)
-        }
-      })
-      let superHero = []
-      connection.query(`
-        SELECT userName, 
-          (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-        FROM ${gameName}
-        ORDER BY avgTotal DESC
-        LIMIT 1;
-      `, (error, result) => {
-        if(error) {
-          console.log(error)
-        }
-        superHero = result
-      })
-      const grade1st = {
-        grade1_1st: [],
-        grade2_1st: [],
-        grade3_1st: [],
-        grade4_1st: []
-      };
-      
-      for (let n = 0; n < 4; n++) {
-        (function (n) {
-          connection.query(`
-            SELECT userName, 
-              (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-            FROM ${gameName}
-            WHERE grade = ${n + 1}
-            ORDER BY avgTotal DESC
-            LIMIT 1;
-          `, (error, results) => {
-            if (error) {
-              console.log(error);
-            }
-            switch (n) {
-              case 0:
-                grade1st.grade1_1st = results;
-                break;
-              case 1:
-                grade1st.grade2_1st = results;
-                break;
-              case 2:
-                grade1st.grade3_1st = results;
-                break;
-              case 3:
-                grade1st.grade4_1st = results;
-                break;
-              default:
-                break;
-            }
-            if (n === 3 && grade1st[`grade${n + 1}_1st`] && grade1st[`grade${n + 1}_1st`][0]) {
-            }
-          });
-        })(n);
-      }
-      let manHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          manHigh = result[0].userName
-        }
-      })
-      let womanHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          womanHigh = result[0].userName
-        }
-      })
-      let team1st = []
-      connection.query(`
-      SELECT t1.teamNumber,
-         t1.teamSum,
-         t1.teamRank,
-         t2.userName
-      FROM (
-          SELECT teamNumber,
-                teamSum,
-                ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-          FROM (
-              SELECT teamNumber,
-                    SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-              FROM ${gameName}
-              WHERE teamNumber BETWEEN 1 AND 7
-              GROUP BY teamNumber
-          ) AS subquery
-      ) AS t1
-      JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-      WHERE t1.teamRank = 1;
-      `, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        team1st = result
-      })
-
-  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
-    if (error) {
-      throw error;
-    } else {
-      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-        if (error) {
-          throw error;
-        }else {
-          connection.query(`
-            SELECT teamNumber, 
-            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber;
-          `, (error, teamRank) =>{
-            if(error){
-              throw error
-            }else {
-              connection.query(`
-              SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-              FROM ${gameName}
-              WHERE avg_side = 1
-              ORDER BY 1Game_P_M desc
-              limit 7;
-                `, (error, avgGame1) =>{
-                  if(error){
-                    console.log(error)
-                  }else {
-                    connection.query(`
-                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                      limit 7;
-                    `, (error, avgGame2) =>{
-                      if(error){
-                        console.log(error)
-                      }else{
-                        connection.query(`
-                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 3Game_P_M desc
-                            limit 7;
-                          `, (error, avgGame3) =>{
-                            if(error){
-                              console.log(error)
-                            }else{
-                              connection.query(`
-                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                              FROM ${gameName}
-                              WHERE avg_side = 1
-                              ORDER BY 4Game_P_M desc
-                                  limit 7;
-                                `, (error, avgGame4) =>{
-                                  if(error){
-                                    console.log(error)
-                                  }else {
-                                    connection.query(`
-                                      SELECT 
-                                        userName,
-                                        RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                      FROM ${gameName}
-                                        WHERE grade1_side = 1
-                                        ORDER BY 1Game_Rank, userName;
-                                      `,(error, grade1_side1) =>{
-                                        if(error){
-                                          console.log(error)
-                                          }
-                                          connection.query(`
-                                            SELECT 
-                                              userName,
-                                              RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                            FROM ${gameName}
-                                              WHERE grade1_side = 1
-                                              ORDER BY 2Game_Rank, userName;
-                                            `,(error, grade1_side2) =>{
-                                              if(error){
-                                                console.log(error)
-                                              }
-                                              connection.query(`
-                                                SELECT 
-                                                  userName,
-                                                  RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                                FROM ${gameName}
-                                                  WHERE grade1_side = 1
-                                                  ORDER BY 3Game_Rank, userName;
-                                                `,(error, grade1_side3) =>{
-                                                  if(error){
-                                                    console.log(error)
-                                                  }
-                                                  connection.query(`
-                                                    SELECT 
-                                                      userName,
-                                                      RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                    FROM ${gameName}
-                                                      WHERE grade1_side = 1
-                                                      ORDER BY 4Game_Rank, userName;
-                                                    `,(error, grade1_side4) =>{
-                                                      if(error){
-                                                        console.log(error)
-                                                      }
-                                                      let avgGame = {
-                                                        avgGame1: avgGame1,
-                                                        avgGame2: avgGame2,
-                                                        avgGame3: avgGame3,
-                                                        avgGame4: avgGame4
-                                                      };
-                                                      let grade1_side = {
-                                                        grade1_side1: grade1_side1,
-                                                        grade1_side2: grade1_side2,
-                                                        grade1_side3: grade1_side3,
-                                                        grade1_side4: grade1_side4
-                                                      }
-                                                      connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                        if(error){
-                                                          console.log(error)
-                                                        }
-                                                        connection.query(`select * from member where memName = '${memName}' and management = 1;`, (error, management) =>{
-                                                          if(error){
-                                                            console.log(error)
-                                                          }
-                                                          if(management.length == 1) {
-                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                          }else {
-                                                            res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                          }
-                                                        })
-                                                      })
-                                                    })
-                                                  })
-                                                })
-                                              })
-                                            }
-                                          })
-                                        }
-                                      })
-                                    }
-                                  })
-                                }
-                              })
-                            }
-                          })
-                        }
-                      })
-                    }
-                  })
-                })
-              })
 
 app.post('/teamJoin', (req, res) => {
   const loggedName = req.body.joinGameuserName
   const gameName = req.body.joinGameName
   const teamNumber = req.body.teamNumber
+  const memId = req.body.memId;
+  const memGender = req.body.memGender
+
+  const redirectPath = `/scoreboard/${memId}/${memGender}?joinGame=${encodeURIComponent(gameName)}&memName=${encodeURIComponent(loggedName)}`
 
   connection.query(`update ${gameName} set teamNumber = ${teamNumber} where userName = '${loggedName}'`, (error, result) => {
     if (error) {
       throw error;
     }
-
-    let teams = {
-      teamScore1: [],
-      teamScore2: [],
-      teamScore3: [],
-      teamScore4: [],
-      teamScore5: [],
-      teamScore6: [],
-      teamScore7: []
-    }
-    
-    connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
-    
-      results5.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teams.teamScore1.push(result);
-            break;
-          case 2:
-            teams.teamScore2.push(result);
-            break;
-          case 3:
-            teams.teamScore3.push(result);
-            break;
-          case 4:
-            teams.teamScore4.push(result);
-            break;
-          case 5:
-            teams.teamScore5.push(result);
-            break;
-          case 6:
-            teams.teamScore6.push(result);
-            break;
-          case 7:
-            teams.teamScore7.push(result);
-            break;
-        }
-      });
-    })
-  
-    let teamScores = {
-      team1: [],
-      team2: [],
-      team3: [],
-      team4: [],
-      team5: [],
-      team6: [],
-      team7: []
-    }
-    connection.query(`SELECT teamNumber,
-      sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-      SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-      SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-      SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-      SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-      FROM ${gameName}
-      GROUP BY teamNumber
-      ORDER BY teamNumber;`, (error, result3) => {
-        if(error){
-          console.log(error)
-        }
-        result3.forEach(result => {
-          const { teamNumber } = result;
-          switch (teamNumber) {
-            case 1:
-              teamScores.team1.push(result);
-              break;
-            case 2:
-              teamScores.team2.push(result);
-              break;
-            case 3:
-              teamScores.team3.push(result);
-              break;
-            case 4:
-              teamScores.team4.push(result);
-              break;
-            case 5:
-              teamScores.team5.push(result);
-              break;
-            case 6:
-              teamScores.team6.push(result);
-              break;
-            case 7:
-              teamScores.team7.push(result);
-              break;
-          }
-        })
-      })
-      let pin1st = [];
-      connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        pin1st = result;
-      })
-      let superHero = []
-      connection.query(`
-        SELECT userName, 
-          (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-        FROM ${gameName}
-        ORDER BY avgTotal DESC
-        LIMIT 1;
-      `, (error, result) => {
-        if(error) {
-          console.log(error)
-        }
-        superHero = result
-      })
-      let grade1st = {
-        grade1_1st: [],
-        grade2_1st: [],
-        grade3_1st: [],
-        grade4_1st: []
-      };
-  
-      for (let n = 0; n < 4; n++) {
-        (function (n) {
-          connection.query(`
-            SELECT userName, 
-              (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-            FROM ${gameName}
-            WHERE grade = ${n + 1}
-            ORDER BY avgTotal DESC
-            LIMIT 1;
-          `, (error, results) => {
-            if (error) {
-              console.log(error);
-            }
-            switch (n) {
-              case 0:
-                grade1st.grade1_1st = results;
-                break;
-              case 1:
-                grade1st.grade2_1st = results;
-                break;
-              case 2:
-                grade1st.grade3_1st = results;
-                break;
-              case 3:
-                grade1st.grade4_1st = results;
-                break;
-              default:
-                break;
-            }
-          });
-        })(n);
-      }
-      let manHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          manHigh = result[0].userName
-        }
-      })
-      let womanHigh = []
-      connection.query(`
-      SELECT userName
-      FROM ${gameName}
-      WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-      ORDER BY userHigh DESC
-      LIMIT 1;
-      `, (error, result) => {
-        if (error) {
-          console.log(error)
-        }
-        if (result.length > 0) {
-          womanHigh = result[0].userName
-        }
-      })
-      let team1st = []
-      connection.query(`
-      SELECT t1.teamNumber,
-         t1.teamSum,
-         t1.teamRank,
-         t2.userName
-      FROM (
-          SELECT teamNumber,
-                teamSum,
-                ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-          FROM (
-              SELECT teamNumber,
-                    SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-              FROM ${gameName}
-              WHERE teamNumber BETWEEN 1 AND 7
-              GROUP BY teamNumber
-          ) AS subquery
-      ) AS t1
-      JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-      WHERE t1.teamRank = 1;
-      `, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        team1st = result
-      })
-  connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${loggedName}'`, (error, result) => {
-    if (error) {
-      throw error;
-    } else {
-      connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-        if (error) {
-          throw error;
-        }else {
-          connection.query(`
-            SELECT teamNumber, 
-            SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-            SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-            SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-            SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-            RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber;
-          `, (error, teamRank) =>{
-            if(error){
-              throw error
-            }else {
-              connection.query(`
-              SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-              FROM ${gameName}
-              WHERE avg_side = 1
-              ORDER BY 1Game_P_M desc
-                  limit 7;
-                `, (error, avgGame1) =>{
-                  if(error){
-                    console.log(error)
-                  }else {
-                    connection.query(`
-                    SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                      limit 7;
-                    `, (error, avgGame2) =>{
-                      if(error){
-                        console.log(error)
-                      }else{
-                        connection.query(`
-                        SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 3Game_P_M desc
-                            limit 7;
-                          `, (error, avgGame3) =>{
-                            if(error){
-                              console.log(error)
-                            }else{
-                              connection.query(`
-                              SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                              FROM ${gameName}
-                              WHERE avg_side = 1
-                              ORDER BY 4Game_P_M desc
-                                  limit 7;
-                                `, (error, avgGame4) =>{
-                                  if(error){
-                                    console.log(error)
-                                  }else {
-                                    connection.query(`
-                                      SELECT 
-                                        userName,
-                                        RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                      FROM ${gameName}
-                                        WHERE grade1_side = 1
-                                        ORDER BY 1Game_Rank, userName;
-                                      `,(error, grade1_side1) =>{
-                                        if(error){
-                                          console.log(error)
-                                          }
-                                          connection.query(`
-                                            SELECT 
-                                              userName,
-                                              RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                            FROM ${gameName}
-                                              WHERE grade1_side = 1
-                                              ORDER BY 2Game_Rank, userName;
-                                            `,(error, grade1_side2) =>{
-                                              if(error){
-                                                console.log(error)
-                                              }
-                                              connection.query(`
-                                                SELECT 
-                                                  userName,
-                                                  RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                                FROM ${gameName}
-                                                  WHERE grade1_side = 1
-                                                  ORDER BY 3Game_Rank, userName;
-                                                `,(error, grade1_side3) =>{
-                                                  if(error){
-                                                    console.log(error)
-                                                  }
-                                                  connection.query(`
-                                                    SELECT 
-                                                      userName,
-                                                      RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                    FROM ${gameName}
-                                                      WHERE grade1_side = 1
-                                                      ORDER BY 4Game_Rank, userName;
-                                                    `,(error, grade1_side4) =>{
-                                                      if(error){
-                                                        console.log(error)
-                                                      }
-                                                      let avgGame = {
-                                                        avgGame1: avgGame1 || 'x',
-                                                        avgGame2: avgGame2 || 'x',
-                                                        avgGame3: avgGame3 || 'x',
-                                                        avgGame4: avgGame4 || 'x'
-                                                      };
-                                                      let grade1_side = {
-                                                        grade1_side1: grade1_side1 || 'x',
-                                                        grade1_side2: grade1_side2 || 'x',
-                                                        grade1_side3: grade1_side3 || 'x',
-                                                        grade1_side4: grade1_side4 || 'x'
-                                                      }
-                                                      connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                        if(error){
-                                                          console.log(error)
-                                                        }
-                                                        connection.query(`select * from member where memName = '${loggedName}' and management = 1;`, (error, management) =>{
-                                                          if(error){
-                                                            console.log(error)
-                                                          }
-                                                          if(management.length == 1) {
-                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                          }else {
-                                                            res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                          }
-                                                      })
-                                                    })
-                                                  })
-                                                })
-                                              })
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              })
+  })
+  res.redirect(redirectPath);
 })
 
 app.post('/resetTeam', (req, res) => {
   const loggedName = req.body.resetTeamuserName;
   const gameName = req.body.resetTeamGameName 
+  const memId = req.body.memId;
+  const memGender = req.body.memGender
+
+  const redirectPath = `/scoreboard/${memId}/${memGender}?joinGame=${encodeURIComponent(gameName)}&memName=${encodeURIComponent(loggedName)}`
 
   connection.query(`update ${gameName} set teamNumber = null;`, (error, result) => {
     if (error) {
       throw error;
-    } else {
-      connection.query(`SELECT userName, userAvg, 1Game, 2Game, 3Game, 4Game FROM ${gameName} WHERE userName = '${loggedName}'`, (error, result) => {
-        if (error) {
-          throw error;
-        } else {
-          connection.query(`SELECT * FROM ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-            if (error) {
-              throw error;
-            } else {
-              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 1`, (error, team1) => {
-                if (error) {
-                  throw error;
-                } else {
-                  connection.query(`select * from ${gameName} where teamNumber = 1`, (error, teamScore1) => {
-                    if (error) {
-                      throw error;
-                    } else {
-                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 2`, (error, team2) => {
-                        if (error) {
-                          throw error;
-                        } else {
-                          connection.query(`select * from ${gameName} where teamNumber = 2`, (error, teamScore2) => {
-                            if (error) {
-                              throw error;
-                            } else {
-                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 3`, (error, team3) => {
-                                if (error) {
-                                  throw error;
-                                } else {
-                                  connection.query(`select * from ${gameName} where teamNumber = 3`, (error, teamScore3) => {
-                                    if (error) {
-                                      throw error;
-                                    } else {
-                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 4`, (error, team4) => {
-                                        if (error) {
-                                          throw error;
-                                        } else {
-                                          connection.query(`select * from ${gameName} where teamNumber = 4`, (error, teamScore4) => {
-                                            if (error) {
-                                              throw error;
-                                            } else {
-                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 5`, (error, team5) => {
-                                                if (error) {
-                                                  throw error;
-                                                } else {
-                                                  connection.query(`select * from ${gameName} where teamNumber = 5`, (error, teamScore5) => {
-                                                    if (error) {
-                                                      throw error;
-                                                    } else {
-                                                      connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 6`, (error, team6) => {
-                                                        if (error) {
-                                                          throw error;
-                                                        } else {
-                                                          connection.query(`select * from ${gameName} where teamNumber = 6`, (error, teamScore6) => {
-                                                            if (error) {
-                                                              throw error;
-                                                            } else {
-                                                              connection.query(`select SUM(1Game) as sum_game1, sum(1Game_P_M) as sum_1game_p_m, sum(2Game) as sum_game2, sum(2Game_P_M) as sum_2game_p_m, sum(3Game) as sum_game3, sum(3Game_P_M) as sum_3game_p_m, sum(4Game) as sum_game4, sum(4Game_P_M) as sum_4game_p_m from ${gameName} where teamNumber = 7`, (error, team7) => {
-                                                                if (error) {
-                                                                  throw error;
-                                                                } else {
-                                                                  connection.query(`select * from ${gameName} where teamNumber = 7`, (error, teamScore7) => {
-                                                                    if (error) {
-                                                                      throw error;
-                                                                    }else {
-                                                                      connection.query(`
-                                                                        SELECT teamNumber, 
-                                                                        SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-                                                                        SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-                                                                        SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-                                                                        SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-                                                                        RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-                                                                        FROM ${gameName}
-                                                                        WHERE teamNumber BETWEEN 1 AND 7
-                                                                        GROUP BY teamNumber;
-                                                                      `, (error, teamRank) =>{
-                                                                        if(error){
-                                                                          throw error
-                                                                        }else {
-                                                                          const teams = {
-                                                                            team1: team1,
-                                                                            team2: team2,
-                                                                            team3: team3,
-                                                                            team4: team4,
-                                                                            team5: team5,
-                                                                            team6: team6,
-                                                                            team7: team7
-                                                                          }
-                                                                          const teamScores = {
-                                                                            teamScore1: teamScore1,
-                                                                            teamScore2: teamScore2,
-                                                                            teamScore3: teamScore3,
-                                                                            teamScore4: teamScore4,
-                                                                            teamScore5: teamScore5,
-                                                                            teamScore6: teamScore6,
-                                                                            teamScore7: teamScore7
-                                                                          }
-                                                                            res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank});}
-                                                                          });
-                                                                        }
-                                                                      })
-                                                                    }
-                                                                  })
-                                                                }
-                                                              });
-                                                            }
-                                                          });
-                                                        }
-                                                      });
-                                                    }
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          });
-                                        }
-                                      });
-                                    }
-                                  });
-                                }
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-    });
+    }
+  })
+  res.redirect(redirectPath);
+})
 
 app.post('/gameSetting', (req, res) =>{
   const gameSettings = req.body.gameSettings;
   const gameName = req.body.gameSettingGameName;
-  const memName = req.body.gameSettingUserName
+  const loggedName = req.body.gameSettingUserName
+  const memId = req.body.memId;
+  const memGender = req.body.memGender
+
+  const redirectPath = `/scoreboard/${memId}/${memGender}?joinGame=${encodeURIComponent(gameName)}&memName=${encodeURIComponent(loggedName)}`
 
   
   for(var i = 0; i < gameSettings.length; i++) {
@@ -2054,763 +807,5 @@ app.post('/gameSetting', (req, res) =>{
     })
   }
 
-
-  let teams = {
-    teamScore1: [],
-    teamScore2: [],
-    teamScore3: [],
-    teamScore4: [],
-    teamScore5: [],
-    teamScore6: [],
-    teamScore7: []
-  }
-  
-  connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-  
-    results5.forEach(result => {
-      const { teamNumber } = result;
-      switch (teamNumber) {
-        case 1:
-          teams.teamScore1.push(result);
-          break;
-        case 2:
-          teams.teamScore2.push(result);
-          break;
-        case 3:
-          teams.teamScore3.push(result);
-          break;
-        case 4:
-          teams.teamScore4.push(result);
-          break;
-        case 5:
-          teams.teamScore5.push(result);
-          break;
-        case 6:
-          teams.teamScore6.push(result);
-          break;
-        case 7:
-          teams.teamScore7.push(result);
-          break;
-      }
-    });
-  })
-  console.log(teams)
-  let teamScores = {
-    team1: [],
-    team2: [],
-    team3: [],
-    team4: [],
-    team5: [],
-    team6: [],
-    team7: []
-  }
-  connection.query(`SELECT teamNumber,
-    sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-    SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-    SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-    SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-    SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-    FROM ${gameName}
-    GROUP BY teamNumber
-    ORDER BY teamNumber;`, (error, result3) => {
-      if(error){
-        console.log(error)
-      }
-      result3.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teamScores.team1.push(result);
-            break;
-          case 2:
-            teamScores.team2.push(result);
-            break;
-          case 3:
-            teamScores.team3.push(result);
-            break;
-          case 4:
-            teamScores.team4.push(result);
-            break;
-          case 5:
-            teamScores.team5.push(result);
-            break;
-          case 6:
-            teamScores.team6.push(result);
-            break;
-          case 7:
-            teamScores.team7.push(result);
-            break;
-        }
-      })
-    })
-    let pin1st = [];
-    connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      pin1st = result;
-    })
-   
-    let superHero = []
-    connection.query(`
-      SELECT userName, 
-        (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-      FROM ${gameName}
-      ORDER BY avgTotal DESC
-      LIMIT 1;
-    `, (error, result) => {
-      if(error) {
-        console.log(error)
-      }
-      superHero = result
-    })
-    let grade1st = {
-      grade1_1st: [],
-      grade2_1st: [],
-      grade3_1st: [],
-      grade4_1st: []
-    };
-
-    for (let n = 0; n < 4; n++) {
-      (function (n) {
-        connection.query(`
-          SELECT userName, 
-            (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-          FROM ${gameName}
-          WHERE grade = ${n + 1}
-          ORDER BY avgTotal DESC
-          LIMIT 1;
-        `, (error, results) => {
-          if (error) {
-            console.log(error);
-          }
-          switch (n) {
-            case 0:
-              grade1st.grade1_1st = results;
-              break;
-            case 1:
-              grade1st.grade2_1st = results;
-              break;
-            case 2:
-              grade1st.grade3_1st = results;
-              break;
-            case 3:
-              grade1st.grade4_1st = results;
-              break;
-            default:
-              break;
-          }
-        });
-      })(n);
-    }
-    let manHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result && result.length > 0) {
-        manHigh = result[0]?.userName
-      } else {
-        manHigh = null;
-      }
-    })
-    let womanHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result && result.length > 0) {
-        womanHigh = result[0]?.userName
-      } else {
-        womanHigh = null;
-      }
-    })
-    let team1st = []
-    connection.query(`
-    SELECT t1.teamNumber,
-       t1.teamSum,
-       t1.teamRank,
-       t2.userName
-    FROM (
-        SELECT teamNumber,
-              teamSum,
-              ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-        FROM (
-            SELECT teamNumber,
-                  SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber
-        ) AS subquery
-    ) AS t1
-    JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-    WHERE t1.teamRank = 1;
-    `, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      team1st = result
-    })
-connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
-  if (error) {
-    throw error;
-  } else {
-    console.log(result)
-    connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-      if (error) {
-        throw error;
-      }else {
-        connection.query(`
-          SELECT teamNumber, 
-          SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-          SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-          SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-          SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-          FROM ${gameName}
-          WHERE teamNumber BETWEEN 1 AND 7
-          GROUP BY teamNumber;
-        `, (error, teamRank) =>{
-          if(error){
-            throw error
-          }else {
-            connection.query(`
-            SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-            FROM ${gameName}
-            WHERE avg_side = 1
-            ORDER BY 1Game_P_M desc
-                limit 7
-              `, (error, avgGame1) =>{
-                if(error){
-                  console.log(error)
-                }else {
-                  connection.query(`
-                  SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                    limit 7
-                  `, (error, avgGame2) =>{
-                    if(error){
-                      console.log(error)
-                    }else{
-                      connection.query(`
-                      SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                      FROM ${gameName}
-                      WHERE avg_side = 1
-                      ORDER BY 3Game_P_M desc
-                          limit 7
-                        `, (error, avgGame3) =>{
-                          if(error){
-                            console.log(error)
-                          }else{
-                            connection.query(`
-                            SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                            ORDER BY 4Game_P_M desc
-                                limit 7
-                              `, (error, avgGame4) =>{
-                                if(error){
-                                  console.log(error)
-                                }else {
-                                  connection.query(`
-                                    SELECT 
-                                      userName,
-                                      RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                    FROM ${gameName}
-                                      WHERE grade1_side = 1
-                                      ORDER BY 1Game_Rank, userName;
-                                    `,(error, grade1_side1) =>{
-                                      if(error){
-                                        console.log(error)
-                                        }
-                                        connection.query(`
-                                          SELECT 
-                                            userName,
-                                            RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                          FROM ${gameName}
-                                            WHERE grade1_side = 1
-                                            ORDER BY 2Game_Rank, userName;
-                                          `,(error, grade1_side2) =>{
-                                            if(error){
-                                              console.log(error)
-                                            }
-                                            connection.query(`
-                                              SELECT 
-                                                userName,
-                                                RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                              FROM ${gameName}
-                                                WHERE grade1_side = 1
-                                                ORDER BY 3Game_Rank, userName;
-                                              `,(error, grade1_side3) =>{
-                                                if(error){
-                                                  console.log(error)
-                                                }
-                                                connection.query(`
-                                                  SELECT 
-                                                    userName,
-                                                    RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                  FROM ${gameName}
-                                                    WHERE grade1_side = 1
-                                                    ORDER BY 4Game_Rank, userName;
-                                                  `,(error, grade1_side4) =>{
-                                                    if(error){
-                                                      console.log(error)
-                                                    }
-                                                    let avgGame = {
-                                                      avgGame1: avgGame1,
-                                                      avgGame2: avgGame2,
-                                                      avgGame3: avgGame3,
-                                                      avgGame4: avgGame4
-                                                    };
-                                                    let grade1_side = {
-                                                      grade1_side1: grade1_side1,
-                                                      grade1_side2: grade1_side2,
-                                                      grade1_side3: grade1_side3,
-                                                      grade1_side4: grade1_side4
-                                                    }
-                                                    connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                      if(error){
-                                                        console.log(error)
-                                                      }
-                                                      res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                    })
-                                                  })
-                                                })
-                                              })
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              })
-            
-app.post('/queryCeremony', (req, res) =>{
-  const gameName = req.body.queryCeremonyGameName;
-  const memName = req.body.CeremonyUserName;
-
-  let teams = {
-    teamScore1: [],
-    teamScore2: [],
-    teamScore3: [],
-    teamScore4: [],
-    teamScore5: [],
-    teamScore6: [],
-    teamScore7: []
-  }
-  
-  connection.query(`select * from ${gameName} order by teamNumber, userAvg desc;`, (error, results5) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-  
-    results5.forEach(result => {
-      const { teamNumber } = result;
-      switch (teamNumber) {
-        case 1:
-          teams.teamScore1.push(result);
-          break;
-        case 2:
-          teams.teamScore2.push(result);
-          break;
-        case 3:
-          teams.teamScore3.push(result);
-          break;
-        case 4:
-          teams.teamScore4.push(result);
-          break;
-        case 5:
-          teams.teamScore5.push(result);
-          break;
-        case 6:
-          teams.teamScore6.push(result);
-          break;
-        case 7:
-          teams.teamScore7.push(result);
-          break;
-      }
-    });
-  })
-  console.log(teams)
-  let teamScores = {
-    team1: [],
-    team2: [],
-    team3: [],
-    team4: [],
-    team5: [],
-    team6: [],
-    team7: []
-  }
-  connection.query(`SELECT teamNumber,
-    sum(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) as teamSum,
-    SUM(1Game) AS sum_game1, SUM(1Game_P_M) AS sum_1game_p_m, 
-    SUM(2Game) AS sum_game2, SUM(2Game_P_M) AS sum_2game_p_m, 
-    SUM(3Game) AS sum_game3, SUM(3Game_P_M) AS sum_3game_p_m, 
-    SUM(4Game) AS sum_game4, SUM(4Game_P_M) AS sum_4game_p_m
-    FROM ${gameName}
-    GROUP BY teamNumber
-    ORDER BY teamNumber;`, (error, result3) => {
-      if(error){
-        console.log(error)
-      }
-      result3.forEach(result => {
-        const { teamNumber } = result;
-        switch (teamNumber) {
-          case 1:
-            teamScores.team1.push(result);
-            break;
-          case 2:
-            teamScores.team2.push(result);
-            break;
-          case 3:
-            teamScores.team3.push(result);
-            break;
-          case 4:
-            teamScores.team4.push(result);
-            break;
-          case 5:
-            teamScores.team5.push(result);
-            break;
-          case 6:
-            teamScores.team6.push(result);
-            break;
-          case 7:
-            teamScores.team7.push(result);
-            break;
-        }
-      })
-    })
-    let pin1st = [];
-    connection.query(`select userName from ${gameName} order by userTotal desc limit 1;`, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      pin1st = result;
-      var pin1stName = pin1st[0].userName;
-      connection.query(`
-        update ${gameName} set checking = 1 where userName = '${pin1stName}';
-      `, (error, result) =>{
-        if(error){
-          console.log(error)
-        }
-        console.log(result)
-      })
-    })
-   
-    let superHero = []
-    connection.query(`
-      SELECT userName, 
-        (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-      FROM ${gameName}
-      ORDER BY avgTotal DESC
-      LIMIT 1;
-    `, (error, result) => {
-      if(error) {
-        console.log(error)
-      }
-      superHero = result
-    })
-    let grade1st = {
-      grade1_1st: [],
-      grade2_1st: [],
-      grade3_1st: [],
-      grade4_1st: []
-    };
-    
-    for (let n = 0; n < 4; n++) {
-      (function (n) {
-        connection.query(`
-          SELECT userName, 
-            (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
-          FROM ${gameName}
-          WHERE grade = ${n + 1} and checking is null
-          ORDER BY avgTotal DESC
-          LIMIT 1;
-        `, (error, results) => {
-          if (error) {
-            console.log(error);
-          }
-          switch (n) {
-            case 0:
-              grade1st.grade1_1st = results;
-              break;
-            case 1:
-              grade1st.grade2_1st = results;
-              break;
-            case 2:
-              grade1st.grade3_1st = results;
-              break;
-            case 3:
-              grade1st.grade4_1st = results;
-              break;
-            default:
-              break;
-          }
-          const userName = results[n]?.userName;
-          connection.query(`
-            UPDATE ${gameName}
-            SET checking = 1
-            WHERE userName = '${userName}';
-          `, (error, updateResult) => {
-            if (error) {
-              console.log(error);
-            }
-          });
-        });
-      })(n);
-    }
-    let manHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 1 AND checking is null and (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result && result.length > 0) {
-        manHigh = result[0].userName
-        connection.query(`
-            UPDATE ${gameName}
-            SET checking = 1
-            WHERE userName = '${manHigh}';
-          `, (error, updateResult) => {
-            if (error) {
-              console.log(error);
-            }
-          });
-      } else {
-      }
-    })
-    let womanHigh = []
-    connection.query(`
-    SELECT userName
-    FROM ${gameName}
-    WHERE gender = 2 AND checking is null and (1Game >= 200 OR 2Game >= 200 OR 3Game >= 200 OR 4Game >= 200)
-    ORDER BY userHigh DESC
-    LIMIT 1;
-    `, (error, result) => {
-      if (error) {
-        console.log(error)
-      }
-      if (result && result.length > 0) {
-        womanHigh = result[0].userName
-        connection.query(`
-            UPDATE ${gameName}
-            SET checking = 1
-            WHERE userName = '${womanHigh}';
-          `, (error, updateResult) => {
-            if (error) {
-              console.log(error);
-            }
-          });
-      } else {
-        womanHigh = null;
-      }
-    })
-    let team1st = []
-    connection.query(`
-    SELECT t1.teamNumber,
-       t1.teamSum,
-       t1.teamRank,
-       t2.userName
-    FROM (
-        SELECT teamNumber,
-              teamSum,
-              ROW_NUMBER() OVER (ORDER BY teamSum DESC) AS teamRank
-        FROM (
-            SELECT teamNumber,
-                  SUM(CAST(1Game_P_M AS DECIMAL) + CAST(2Game_P_M AS DECIMAL) + CAST(3Game_P_M AS DECIMAL) + CAST(4Game_P_M AS DECIMAL)) AS teamSum
-            FROM ${gameName}
-            WHERE teamNumber BETWEEN 1 AND 7
-            GROUP BY teamNumber
-        ) AS subquery
-    ) AS t1
-    JOIN ${gameName} AS t2 ON t1.teamNumber = t2.teamNumber
-    WHERE t1.teamRank = 1;
-    `, (error, result) =>{
-      if(error){
-        console.log(error)
-      }
-      team1st = result
-    })
-connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${gameName} where userName = '${memName}'`, (error, result) => {
-  if (error) {
-    throw error;
-  } else {
-    console.log(result)
-    connection.query(`select * from ${gameName} ORDER BY userTotal DESC, userAvg DESC`, (error, results) => {
-      if (error) {
-        throw error;
-      }else {
-        connection.query(`
-          SELECT teamNumber, 
-          SUM(CAST(1Game_P_M AS DECIMAL)) AS total_1Game_P_M,
-          SUM(CAST(2Game_P_M AS DECIMAL)) AS total_2Game_P_M,
-          SUM(CAST(3Game_P_M AS DECIMAL)) AS total_3Game_P_M,
-          SUM(CAST(4Game_P_M AS DECIMAL)) AS total_4Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(1Game_P_M AS DECIMAL)) DESC) AS ranking_1Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(2Game_P_M AS DECIMAL)) DESC) AS ranking_2Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(3Game_P_M AS DECIMAL)) DESC) AS ranking_3Game_P_M,
-          RANK() OVER (ORDER BY SUM(CAST(4Game_P_M AS DECIMAL)) DESC) AS ranking_4Game_P_M
-          FROM ${gameName}
-          WHERE teamNumber BETWEEN 1 AND 7
-          GROUP BY teamNumber;
-        `, (error, teamRank) =>{
-          if(error){
-            throw error
-          }else {
-            connection.query(`
-            SELECT userName, CAST(1Game_P_M AS SIGNED) AS 1Game_P_M
-            FROM ${gameName}
-            WHERE avg_side = 1
-            ORDER BY 1Game_P_M desc
-                limit 7;
-              `, (error, avgGame1) =>{
-                if(error){
-                  console.log(error)
-                }else {
-                  connection.query(`
-                  SELECT userName, CAST(2Game_P_M AS SIGNED) AS 2Game_P_M
-                        FROM ${gameName}
-                        WHERE avg_side = 1
-                        ORDER BY 2Game_P_M desc
-                    limit 7;
-                  `, (error, avgGame2) =>{
-                    if(error){
-                      console.log(error)
-                    }else{
-                      connection.query(`
-                      SELECT userName, CAST(3Game_P_M AS SIGNED) AS 3Game_P_M
-                      FROM ${gameName}
-                      WHERE avg_side = 1
-                      ORDER BY 3Game_P_M desc
-                          limit 7;
-                        `, (error, avgGame3) =>{
-                          if(error){
-                            console.log(error)
-                          }else{
-                            connection.query(`
-                            SELECT userName, CAST(4Game_P_M AS SIGNED) AS 4Game_P_M
-                            FROM ${gameName}
-                            WHERE avg_side = 1
-                            ORDER BY 4Game_P_M desc
-                                limit 7;
-                              `, (error, avgGame4) =>{
-                                if(error){
-                                  console.log(error)
-                                }else {
-                                  connection.query(`
-                                    SELECT 
-                                      userName,
-                                      RANK() OVER (ORDER BY 1Game DESC, userAvg DESC) AS 1Game_Rank
-                                    FROM ${gameName}
-                                      WHERE grade1_side = 1
-                                      ORDER BY 1Game_Rank, userName;
-                                    `,(error, grade1_side1) =>{
-                                      if(error){
-                                        console.log(error)
-                                        }
-                                        connection.query(`
-                                          SELECT 
-                                            userName,
-                                            RANK() OVER (ORDER BY 2Game DESC, userAvg DESC) AS 2Game_Rank
-                                          FROM ${gameName}
-                                            WHERE grade1_side = 1
-                                            ORDER BY 2Game_Rank, userName;
-                                          `,(error, grade1_side2) =>{
-                                            if(error){
-                                              console.log(error)
-                                            }
-                                            connection.query(`
-                                              SELECT 
-                                                userName,
-                                                RANK() OVER (ORDER BY 3Game DESC, userAvg DESC) AS 3Game_Rank
-                                              FROM ${gameName}
-                                                WHERE grade1_side = 1
-                                                ORDER BY 3Game_Rank, userName;
-                                              `,(error, grade1_side3) =>{
-                                                if(error){
-                                                  console.log(error)
-                                                }
-                                                connection.query(`
-                                                  SELECT 
-                                                    userName,
-                                                    RANK() OVER (ORDER BY 4Game DESC, userAvg DESC) AS 4Game_Rank
-                                                  FROM ${gameName}
-                                                    WHERE grade1_side = 1
-                                                    ORDER BY 4Game_Rank, userName;
-                                                  `,(error, grade1_side4) =>{
-                                                    if(error){
-                                                      console.log(error)
-                                                    }
-                                                    let avgGame = {
-                                                      avgGame1: avgGame1,
-                                                      avgGame2: avgGame2,
-                                                      avgGame3: avgGame3,
-                                                      avgGame4: avgGame4
-                                                    };
-                                                    let grade1_side = {
-                                                      grade1_side1: grade1_side1,
-                                                      grade1_side2: grade1_side2,
-                                                      grade1_side3: grade1_side3,
-                                                      grade1_side4: grade1_side4
-                                                    }
-                                                    connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
-                                                      if(error){
-                                                        console.log(error)
-                                                      }
-                                                      res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings});
-                                                    })
-                                                  })
-                                                })
-                                              })
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              })
+  res.redirect(redirectPath);
+})
