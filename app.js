@@ -259,7 +259,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                 SELECT userName, 
                   (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
                 FROM ${gameName}
-                WHERE grade = 2 AND userName NOT IN ('${pin1st}')
+                WHERE grade = 2 AND userName NOT IN ('${pin1stName}')
                 ORDER BY avgTotal DESC
                 LIMIT 1;
               `, (error, result) =>{
@@ -275,7 +275,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                   SELECT userName, 
                     (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
                   FROM ${gameName}
-                  WHERE grade = 3 AND userName NOT IN ('${pin1st}')
+                  WHERE grade = 3 AND userName NOT IN ('${pin1stName}')
                   ORDER BY avgTotal DESC
                   LIMIT 1;
                 `, (error, result) =>{
@@ -291,7 +291,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                     SELECT userName, 
                       (CAST(1Game_P_M AS SIGNED) + CAST(2Game_P_M AS SIGNED) + CAST(3Game_P_M AS SIGNED) + CAST(4Game_P_M AS SIGNED)) AS avgTotal
                     FROM ${gameName}
-                    WHERE grade = 4 AND userName NOT IN ('${pin1st}')
+                    WHERE grade = 4 AND userName NOT IN ('${pin1stName}')
                     ORDER BY avgTotal DESC
                     LIMIT 1;
                   `, (error, result) =>{
@@ -311,7 +311,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                       WHERE 
                         gender = 1 AND 
                         userName NOT IN (
-                          '${pin1st}', 
+                          '${pin1stName}', 
                           '${grade1st.grade1_1st}', 
                           '${grade1st.grade2_1st}', 
                           '${grade1st.grade3_1st}', 
@@ -334,7 +334,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                           WHERE 
                             gender = 2 AND 
                             userName NOT IN (
-                              '${pin1st}', 
+                              '${pin1stName}', 
                               '${grade1st.grade1_1st}', 
                               '${grade1st.grade2_1st}', 
                               '${grade1st.grade3_1st}', 
