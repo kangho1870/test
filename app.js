@@ -318,7 +318,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                           '${grade1st.grade4_1st}'
                           ) AND 
                           (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-                      ORDER BY userHigh DESC
+                      ORDER BY userHigh, userAvg DESC
                       LIMIT 1;
                       `, (error, result) => {
                       if (error) {
@@ -341,7 +341,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
                               '${grade1st.grade4_1st}'
                               ) AND 
                               (1Game >= 230 OR 2Game >= 230 OR 3Game >= 230 OR 4Game >= 230)
-                          ORDER BY userHigh DESC
+                          ORDER BY userHigh, userAvg DESC
                           LIMIT 1;
                           `, (error, result) => {
                             if (error) {

@@ -185,46 +185,82 @@
             </div>
             </p>
             <div class="total_ceremony">
-                    <table>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">총핀</th>
-                            <td colspan="<%= team1st.length %>"><%= pin1st[0]?.userName %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">슈퍼 히어로</th>
-                            <td colspan="<%= team1st.length %>"><%= superHero[0]?.userName %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">1군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade1_1st[0] && grade1st.grade1_1st[0]?.userName || '' %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">2군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade2_1st[0] && grade1st.grade2_1st[0]?.userName || '' %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">3군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade3_1st[0] && grade1st.grade3_1st[0]?.userName || '' %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">4군 1등</th>
-                            <td colspan="<%= team1st.length %>"><%= grade1st.grade4_1st[0] && grade1st.grade4_1st[0]?.userName || '' %></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">남자 하이</th>
-                            <td colspan="<%= team1st.length %>"><%= manHigh[0]?.userName || ''%></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">여자 하이</th>
-                            <td colspan="<%= team1st.length %>"><%= womanHigh[0]?.userName || ''%></td>
-                        </tr>
-                        <tr>
-                            <th colspan="<%= team1st.length %>">팀 1등</th>
-                            <% team1st.forEach(function(member) { %>
-                                <td><%= member.userName %></td>
-                            <% }) %>
-                        </tr>
-                    </table>
+                <table>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">총핀</th>
+                        <td colspan="<%= team1st.length %>"><%= pin1st[0]?.userName %></td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">슈퍼 히어로</th>
+                        <td colspan="<%= team1st.length %>"><%= superHero[0]?.userName %></td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">1군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade1_1st && grade1st.grade1_1st.length > 0) { %>
+                                <%= grade1st.grade1_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">2군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade2_1st && grade1st.grade2_1st.length > 0) { %>
+                                <%= grade1st.grade2_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">3군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade3_1st && grade1st.grade3_1st.length > 0) { %>
+                                <%= grade1st.grade3_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">4군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade4_1st && grade1st.grade4_1st.length > 0) { %>
+                                <%= grade1st.grade4_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">남자 하이</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (manHigh && manHigh.length > 0) { %>
+                                <%= manHigh %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">여자 하이</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (womanHigh && womanHigh.length > 0) { %>
+                                <%= womanHigh %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">팀 1등</th>
+                        <% team1st.forEach(function(member) { %>
+                            <td><%= member.userName %></td>
+                        <% }) %>
+                    </tr>
+                </table>
             </div>
             <p>
             <div class="grade1_side">
