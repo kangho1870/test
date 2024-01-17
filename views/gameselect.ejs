@@ -25,6 +25,20 @@
             </form>
           <% }) %>
         <% }); %>
+          <div class="eventTable">
+          <div class="title">이벤트 게임</div>
+            <% result.forEach((row, index) => { %>
+                <form action="/eventGame/<%= highGame %>/<%= row.memid %>" method="get" id="eventJoinForm">
+                  <button type="submit" class="game-btn2" name="<%= highGame %>">
+                    <span><%= highGame %></span>
+                  </button>
+                  <input type="hidden" value="<%= row.memName %>" name="eventName">
+                  <input type="hidden" value="<%= row.memAvg %>" name="eventAvg">
+                  <input type="hidden" value="<%= row.gender %>" name="eventGender">
+                  <input type="hidden" value="<%= row.memid %>" name="eventId">
+                </form>
+            <% }) %>
+          </div>
       </div>
     
     
@@ -84,6 +98,8 @@
           });
         });
         
+        const eventGameButton = document.querySelectorAll('.eventGame')
+
         const inputElement = document.querySelector('.gameName');
 
         inputElement.addEventListener('input', (event) => {

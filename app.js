@@ -537,7 +537,70 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
     })
   })
 })
+app.get('/eventGame/:gameName/:memId', (req, res) =>{
+  const gameName = req.params.gameName;
+  const memId = req.params.memId;
+  const memName = req.query.eventName;
+  const memAvg = req.query.eventAvg;
 
+  let memHandi = 0;
+  if(memAvg >= 190) {
+    memHandi = 0;
+  }else if(memAvg < 190 && memAvg >= 180) {
+    memHandi = (200 - memAvg) * 0.6
+  }else if(memAvg < 180 && memAvg >= 170) {
+    memHandi = (200 - memAvg) * 0.8
+  }else if(memAvg < 170 && memAvg >= 160) {
+    memHandi = (200 - memAvg) * 0.9
+  }else if(memAvg < 160) {
+    memHandi = 200 - memAvg
+  }
+
+  connection.query(`select userName from ${gameName} where userName = '${memName}'`, (error, result) =>{
+    if(error){
+      console.log(error)
+    }
+    if(result.length > 0) {
+      connection.query(`select * from ${gameName} ORDER BY userTotal DESC;`, (error, highGame) =>{
+        if(error) {
+          console.log(error)
+        }
+      })
+    }else {
+      connection.query(`insert into ${gameName} set userName = '${memName}', userAvg = ${memAvg}, userHandi = ${memHandi}`, (error, result) =>{
+        if(error){
+          console.log(error)
+        }
+      })
+    }
+    connection.query(`select * from ${gameName} ORDER BY userTotal DESC;`, (error, highGame) =>{
+      if(error){
+        console.log(error)
+      }
+      connection.query(`select * from member where memid = ${memId}`, (error, member) =>{
+        if(error){
+          console.log(error)
+        }
+        connection.query(`select * from 하이게임8 ORDER BY userTotal DESC;`, (error, highGame8) =>{
+          if(error){
+            console.log(error)
+          }
+          connection.query(`select * from 하이게임결승 ORDER BY userTotal DESC;`, (error, highGameFinal) =>{
+            if(error){
+              console.log(error)
+            }
+            connection.query(`select * from 하이게임 where userName = '${memName}'`, (error, userName) =>{
+              if(error){
+                console.log(error)
+              }
+              res.render('highGame', {highGame, member, highGame8, highGameFinal, userName})
+            })
+          })
+        })
+      })
+    })
+  })
+})
 app.post('/saveDb', (req, res) => {
   const gameName = req.body.gameName
   const loggedName = req.body.sessionName;
@@ -671,7 +734,25 @@ app.post('/saveDb', (req, res) => {
   }
   res.redirect(redirectPath);
 })
-// 로그인 gameselect 렌더링
+app.post('/saveHighGame', (req, res) => {
+  const game1 = parseInt(req.body.Game1) || 0;
+  const game2 = parseInt(req.body.Game2) || 0;
+  const game3 = parseInt(req.body.Game3) || 0;
+  const userName = req.body.userName
+  const userAvg = req.body.userAvg
+  const userTotal = game1 + game2 + game3
+  const memId = req.body.userId
+  const gameName = '하이게임'
+  
+  connection.query(`update 하이게임 set game1 = ${game1}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
+    if(error){
+      console.log(error)
+    }
+      const redirectPath = `/eventGame/${gameName}/${memId}?eventName=${userName}&eventAvg=${userAvg}`
+      res.redirect(redirectPath)
+  })
+})
+
 app.post('/login', (req, res) => {
   const userName = req.body.userName;
   const userPassword = req.body.userPassword;
@@ -692,10 +773,16 @@ app.post('/login', (req, res) => {
                 throw error;
               }
               const filteredTables = results.filter((row) => {
-                const tableName = row[`Tables_in_allcover`]; // 테이블 이름 추출
-                return tableName !== 'member' && tableName !== 'scorebord' && tableName !== 'team_scoreboard'; // member와 scoreboard 테이블 제외
+                const tableName = row[`Tables_in_allcover`];
+                return tableName !== 'member' && tableName !== 'scorebord' && tableName !== 'team_scoreboard' && tableName !== '하이게임' && tableName !== '하이게임8' && tableName !== '하이게임결승'; // member와 scoreboard 테이블 제외
               });
-              res.render('gameselect', { results: results, result: result, filteredTables: filteredTables });
+              connection.query(`select table_name from information_schema.tables where table_name = '하이게임'`, (error, highGame) =>{
+                if(error){
+                  console.log(error)
+                }
+                var highGame = highGame[0].TABLE_NAME
+                res.render('gameselect', { results: results, result: result, filteredTables: filteredTables , highGame});
+              })
             });
           }
         });

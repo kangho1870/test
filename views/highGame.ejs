@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+    <title>Allcover</title>
+</head>
+<body>
+    <div class="table-container">
+        <p>
+            <div class="final">
+                <table>
+                    <tr>
+                        <th colspan="8">결승 (Coming Soon)</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>이름</th>
+                        <th>에버</th>
+                        <th>핸디</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>합계</th>
+                    </tr>
+                    <% highGameFinal.forEach((row, index) =>{ %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= row.userName %></td>
+                        <td><%= row.userAvg %></td>
+                        <td><%= row.userHandi %></td>
+                        <td><%= row.game1 %></td>
+                        <td><%= row.game2 %></td>
+                        <td><%= row.game3 %></td>
+                        <td><%= row.userTotal %></td>
+                    </tr>
+                    <% }) %>
+                </table>
+            </div>
+        </p>
+        <p>
+            <div class="8">
+                <table>
+                    <tr>
+                        <th colspan="8">8강 (Coming Soon)</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>이름</th>
+                        <th>에버</th>
+                        <th>핸디</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>합계</th>
+                    </tr>
+                    <% highGame8.forEach((row, index) =>{ %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= row.userName %></td>
+                        <td><%= row.userAvg %></td>
+                        <td><%= row.userHandi %></td>
+                        <td><%= row.game1 %></td>
+                        <td><%= row.game2 %></td>
+                        <td><%= row.game3 %></td>
+                        <td><%= row.userTotal %></td>
+                    </tr>
+                    <% }) %>
+                </table>
+            </div>
+        </p>
+        <p>
+            <div class="16">
+                <table>
+                    <tr>
+                        <th colspan="8">16강</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>이름</th>
+                        <th>에버</th>
+                        <th>핸디</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>합계</th>
+                    </tr>
+                    <% highGame.forEach((row, index) =>{ %>
+                    <tr>
+                        <td><%= index + 1 %></td>
+                        <td><%= row.userName %></td>
+                        <td><%= row.userAvg %></td>
+                        <td><%= row.userHandi %></td>
+                        <td><%= row.game1 %></td>
+                        <td><%= row.game2 %></td>
+                        <td><%= row.game3 %></td>
+                        <td><%= row.userTotal %></td>
+                    </tr>
+                    <% }) %>
+                </table>
+            </div>
+        </p>
+        <p>
+            <div class="user-container">
+                <div class="userTable">
+                    <table>
+                        <tr>
+                            <th>No.</th>
+                            <th>이름</th>
+                            <th>에버</th>
+                            <th>핸디</th>
+                        </tr>
+                        <% highGame.forEach((row, index) =>{ %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td><%= row.userHandi %></td>
+                        </tr>
+                        <% }) %>
+                    </table>
+                </div>
+                <div class="notice">
+                    <p>* Allcover HighGame Event ! *</p>
+                    <p>1. 하이게임이란 ?<br>
+                        주어진 기간동안 점수가 가장 높은 3게임의 점수로 겨루는 게임입니다.
+                    </p>
+                    <p>
+                        2. 하이게임 핸디 기준<br>
+                        190이상 200기준 핸디 없음<br>
+                        180이상 190미만 200기준 핸디 60%<br>
+                        170이상 180미만 200기준 핸디 80%<br>
+                        160이상 170미만200기준 핸디 90%<br>
+                        160미만 200기준 핸디 100%<br>
+                        소수점 반올림하며 최대점수는300점<br>
+                        동점시 노핸디, 에버높은순 순으로 순위를 결정합니다.<br>
+                        에버는 1월에버 기준입니다.
+                    </p>
+                    <p>
+                        3. 하이게임 시상<br>
+                        1등 - 원하는볼(단.구할수있는볼, 25만원 넘지않는볼)<br>
+                        2등 - 하이퍼포먼스 볼<br>
+                        3등 - 하이퍼포먼스 볼
+                    </p>
+                </div>
+            </div>
+        </p>
+        <button id="show" class="btn3">점수 입력</button>
+        <div class="background">
+            <div class="window">
+                <div class="popup">
+                    <% userName.forEach((row, index) =>{ %>
+                    <form method="post" action="/saveHighGame" id="input-score" onsubmit="return validateScores()">
+                        <div class="contact_form">
+                            <div>
+                                <input id="contact_name" value="<%= row.game1 || 0 %>" name="Game1" type="text" max="300">
+                                <label for="contact_name">1Game</label>
+                            </div>
+                        </div>
+                        <div class="contact_form">
+                            <div>
+                                <input id="contact_name" value="<%= row.game2 || 0 %>" name="Game2" type="text" max="300">
+                                <label for="contact_name">2Game</label>
+                            </div>
+                        </div>
+                        <div class="contact_form">
+                            <div>
+                                <input id="contact_name" value="<%= row.game3 || 0 %>" name="Game3" type="text" max="300">
+                                <label for="contact_name">3Game</label>
+                            </div>
+                        </div>
+                        <p>
+                            <td><input type="submit" value="점수 입력" id="submit" class="btn"></td> 
+                        </p>
+                            <input type="hidden" name="userName" value="<%= row.userName %>">
+                            <input type="hidden" name="userAvg" value="<%= row.userAvg %>">
+                        <% member.forEach((row) =>{ %>
+                            <input type="hidden" name="userId" value="<%= row.memid %>">
+                        <% }) %>
+                    <% }) %>
+                    </form>
+                        <p>
+                            <button id="close" class="btn2">닫기</button>
+                        </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function validateScores() {
+                var game1 = parseInt(document.getElementsByName('Game1')[0].value) || 0;
+                var game2 = parseInt(document.getElementsByName('Game2')[0].value) || 0;
+                var game3 = parseInt(document.getElementsByName('Game3')[0].value) || 0;
+                
+                return true; // 폼 제출을 허용
+            }
+            function show() {
+                document.querySelector(".background").className = "background show";
+            }
+
+            function close() {
+                document.querySelector(".background").className = "background";
+            }
+
+            document.querySelector("#show").addEventListener("click", show);
+            document.querySelector("#close").addEventListener("click", close);
+
+    </script>
+</body>
+</html>

@@ -217,8 +217,9 @@ td {
 
 .game-table {
     flex: 2;
-    width: 100%;
+    width: 70%;
 }
+
 .game-btn {
     width: 80%;
     height: 70px;
@@ -247,9 +248,37 @@ td {
     font-weight: bold;
     outline: 0;
 }
+.game-btn2 {
+    width: 80%;
+    height: 70px;
+    margin-top: 10%;
+    border: 2px solid rgb(103, 100, 100);
+    border-radius: 0.6em;
+    color: rgb(12, 1, 1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 20px;
+    padding: 1.2em 2.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    background-color: transparent;
+}
+.game-btn2:hover,
+.game-btn2:focus {
+    color: #171616;
+    font-weight: bold;
+    outline: 0;
+}
 @media (max-width: 600px) {
     body {
-        font-size: 5px;
+        font-size: 12px;
     }
     .table-center {
         width: 100%;
@@ -391,7 +420,7 @@ td {
         line-height: 42px;
         padding: 0;
         border: none;
-        width: 100%;
+        width: 80%;
     }
     .game-btn2 span {
         position: relative;
@@ -520,6 +549,18 @@ td {
         flex: 1;
         width: 200px;
     }
+    .user-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .userTable {
+        margin-right: 10px;
+    }
+    .notice {
+        margin-left: 10px;
+    }
+    
 }
 @media (min-width: 601px) {
     /* 데스크톱 화면에 대한 스타일 지정 */
