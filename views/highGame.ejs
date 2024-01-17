@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
     <title>Allcover</title>
+    <style>
+        .high16 table tr:nth-child(-n+16) td {
+            background-color: rgb(161, 199, 227);
+        }
+    </style>
 </head>
 <body>
     <div class="table-container">
@@ -12,7 +17,7 @@
             <div class="final">
                 <table>
                     <tr>
-                        <th colspan="8">결승 (Coming Soon)</th>
+                        <th colspan="9">결승 (Coming Soon)</th>
                     </tr>
                     <tr>
                         <th>순위</th>
@@ -23,27 +28,33 @@
                         <th>2Game</th>
                         <th>3Game</th>
                         <th>합계</th>
+                        <th>핀 차이</th>
                     </tr>
-                    <% highGameFinal.forEach((row, index) =>{ %>
-                    <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= row.userName %></td>
-                        <td><%= row.userAvg %></td>
-                        <td><%= row.userHandi %></td>
-                        <td><%= row.game1 %></td>
-                        <td><%= row.game2 %></td>
-                        <td><%= row.game3 %></td>
-                        <td><%= row.userTotal %></td>
-                    </tr>
+                    <% highGameFinal.forEach((row, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td><%= row.userHandi %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
+                            <% rank.forEach((rows) => { %>
+                                <% if (rows.userName === row.userName) { %>
+                                    <td><%= rows.pinDifference %></td>
+                                <% } %>
+                            <% }) %>
+                        </tr>
                     <% }) %>
                 </table>
             </div>
         </p>
         <p>
-            <div class="8">
+            <div class="high8">
                 <table>
                     <tr>
-                        <th colspan="8">8강 (Coming Soon)</th>
+                        <th colspan="9">8강 (Coming Soon)</th>
                     </tr>
                     <tr>
                         <th>순위</th>
@@ -54,27 +65,33 @@
                         <th>2Game</th>
                         <th>3Game</th>
                         <th>합계</th>
+                        <th>핀 차이</th>
                     </tr>
-                    <% highGame8.forEach((row, index) =>{ %>
-                    <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= row.userName %></td>
-                        <td><%= row.userAvg %></td>
-                        <td><%= row.userHandi %></td>
-                        <td><%= row.game1 %></td>
-                        <td><%= row.game2 %></td>
-                        <td><%= row.game3 %></td>
-                        <td><%= row.userTotal %></td>
-                    </tr>
+                    <% highGame8.forEach((row, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td><%= row.userHandi %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
+                            <% rank.forEach((rows) => { %>
+                                <% if (rows.userName === row.userName) { %>
+                                    <td><%= rows.pinDifference %></td>
+                                <% } %>
+                            <% }) %>
+                        </tr>
                     <% }) %>
                 </table>
             </div>
         </p>
         <p>
-            <div class="16">
+            <div class="high16">
                 <table>
                     <tr>
-                        <th colspan="8">16강</th>
+                        <th colspan="9">16강</th>
                     </tr>
                     <tr>
                         <th>순위</th>
@@ -85,18 +102,24 @@
                         <th>2Game</th>
                         <th>3Game</th>
                         <th>합계</th>
+                        <th>핀 차이</th>
                     </tr>
-                    <% highGame.forEach((row, index) =>{ %>
-                    <tr>
-                        <td><%= index + 1 %></td>
-                        <td><%= row.userName %></td>
-                        <td><%= row.userAvg %></td>
-                        <td><%= row.userHandi %></td>
-                        <td><%= row.game1 %></td>
-                        <td><%= row.game2 %></td>
-                        <td><%= row.game3 %></td>
-                        <td><%= row.userTotal %></td>
-                    </tr>
+                    <% highGame.forEach((row, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td><%= row.userHandi %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
+                            <% rank.forEach((rows) => { %>
+                                <% if (rows.userName === row.userName) { %>
+                                    <td><%= rows.pinDifference %></td>
+                                <% } %>
+                            <% }) %>
+                        </tr>
                     <% }) %>
                 </table>
             </div>

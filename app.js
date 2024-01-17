@@ -116,6 +116,7 @@ app.get('/scoreboard/:memId/:memGender', (req, res) => {
         }
       })
     }
+    
     let teams = {
     teamScore1: [],
     teamScore2: [],
@@ -501,12 +502,27 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
                                                           grade1_side3: grade1_side3,
                                                           grade1_side4: grade1_side4
                                                         }
+                                                        connection.query(`
+                                                          SELECT userName,
+                                                            (userTotal - (
+                                                              SELECT userTotal
+                                                              FROM ${gameName}
+                                                              ORDER BY userTotal DESC
+                                                              LIMIT 1
+                                                            )) AS pinDifference
+                                                          FROM ${gameName}
+                                                          ORDER BY userTotal DESC;
+                                                          `, (error, userRank) =>{
+                                                            if(error){
+                                                              console.log(error)
+                                                            }
+                                                            console.log(userRank)
                                                         connection.query(`select * from ${gameName} order by userAvg desc;`, (error, settings) =>{
                                                           connection.query(`select management from member where memid = '${memid}' and management = 1;`, (error, management) =>{
                                                             if(management.length == 1) {
-                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender});
+                                                              res.render('test', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender, userRank});
                                                             }else {
-                                                              res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender});
+                                                              res.render('test2', { userName: result, results: results, gameName: gameName, teams, teamScores, teamRank: teamRank, grade1_side, avgGame, pin1st, superHero, grade1st, manHigh, womanHigh, team1st, settings, memid, memGender, userRank});
                                                             }
                                                           })
                                                         })
@@ -514,26 +530,27 @@ connection.query(`select userName, userAvg, 1Game, 2Game, 3Game, 4Game from ${ga
                                                     })
                                                   })
                                                 })
-                                              }
-                                            })
-                                          }
-                                        })
-                                      }
-                                    })
-                                  }
-                                })
-                              }
-                            })
-                          }
-                        })
-                      }
-                    })
+                                              })
+                                            }
+                                          })
+                                        }
+                                      })
+                                    }
+                                  })
+                                }
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
                   })
                 })
               })
             })
           })
         })
+      })
     })
   })
 })
@@ -593,7 +610,17 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
               if(error){
                 console.log(error)
               }
-              res.render('highGame', {highGame, member, highGame8, highGameFinal, userName})
+              connection.query(`
+              SELECT userName, userTotal, userTotal - (
+                SELECT MAX(userTotal) FROM 하이게임
+              ) AS pinDifference
+              FROM 하이게임;
+              `, (error, rank) =>{
+                if(error){
+                  console.log(error)
+                }
+                res.render('highGame', {highGame, member, highGame8, highGameFinal, userName, rank})
+              })
             })
           })
         })

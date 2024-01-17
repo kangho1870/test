@@ -117,6 +117,7 @@
                     <th class="origin_game">4Game</th>
                     <th>4G(+/-)</th>
                     <th>총 핀</th>
+                    <th>핀 차이</th>
                     <th>평 균</th>
                     <th>최고점수</th>
                     <th>최저점수</th>
@@ -135,6 +136,11 @@
                     <td class="game-cell" id="Game4<%= row.userName %>"><%= row['4Game'] %></td>
                     <td class="game_P_M-cell"><%= row['4Game_P_M'] %></td>
                     <td class="total"><%= row.userTotal %></td>
+                    <% userRank.forEach((rows) => { %>
+                        <% if (rows.userName === row.userName) { %>
+                            <td><%= rows.pinDifference %></td>
+                        <% } %>
+                    <% }) %>
                     <td class="userThisAvg"><%= row.userThisAvg %></td>
                     <td><%= row.userHigh %></td>
                     <td><%= row.userLow %></td>

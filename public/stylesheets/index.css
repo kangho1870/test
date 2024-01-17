@@ -560,7 +560,15 @@ td {
     .notice {
         margin-left: 10px;
     }
-    
+    .high16 table tr:nth-child(-n+16) td {
+        background-color: rgb(227, 161, 161);
+    }
+    .high8 table tr:nth-child(-n+8) td {
+        background-color: rgb(227, 161, 161);
+    }
+    .final table tr:nth-child(-n+3) td {
+        background-color: rgb(227, 161, 161);
+    }
 }
 @media (min-width: 601px) {
     /* 데스크톱 화면에 대한 스타일 지정 */
