@@ -36,9 +36,9 @@
                             <td><%= row.userName %></td>
                             <td><%= row.userAvg %></td>
                             <td><%= row.userHandi %></td>
-                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
-                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
-                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1Origin %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2Origin %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3Origin %></td>
                             <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
                             <% rank.forEach((rows) => { %>
                                 <% if (rows.userName === row.userName) { %>
@@ -73,9 +73,9 @@
                             <td><%= row.userName %></td>
                             <td><%= row.userAvg %></td>
                             <td><%= row.userHandi %></td>
-                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
-                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
-                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1Origin %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2Origin %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3Origin %></td>
                             <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
                             <% rank.forEach((rows) => { %>
                                 <% if (rows.userName === row.userName) { %>
@@ -110,9 +110,9 @@
                             <td><%= row.userName %></td>
                             <td><%= row.userAvg %></td>
                             <td><%= row.userHandi %></td>
-                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1 %></td>
-                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2 %></td>
-                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3 %></td>
+                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1Origin %></td>
+                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2Origin %></td>
+                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3Origin %></td>
                             <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
                             <% rank.forEach((rows) => { %>
                                 <% if (rows.userName === row.userName) { %>
@@ -134,7 +134,7 @@
                             <th>에버</th>
                             <th>핸디</th>
                         </tr>
-                        <% highGame.forEach((row, index) =>{ %>
+                        <% member.forEach((row, index) =>{ %>
                         <tr>
                             <td><%= index + 1 %></td>
                             <td><%= row.userName %></td>

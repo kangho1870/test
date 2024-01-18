@@ -619,7 +619,12 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
                 if(error){
                   console.log(error)
                 }
-                res.render('highGame', {highGame, member, highGame8, highGameFinal, userName, rank})
+                connection.query(`select * from 하이게임 order by userAvg desc;`, (error, member) =>{
+                  if(error){
+                    console.log(error)
+                  }
+                  res.render('highGame', {highGame, member, highGame8, highGameFinal, userName, rank, member})
+                })
               })
             })
           })
@@ -765,13 +770,29 @@ app.post('/saveHighGame', (req, res) => {
   const game1 = parseInt(req.body.Game1) || 0;
   const game2 = parseInt(req.body.Game2) || 0;
   const game3 = parseInt(req.body.Game3) || 0;
+  
   const userName = req.body.userName
   const userAvg = req.body.userAvg
-  const userTotal = game1 + game2 + game3
+  
   const memId = req.body.userId
   const gameName = '하이게임'
-  
-  connection.query(`update 하이게임 set game1 = ${game1}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
+  let memHandi = 0;
+  if(userAvg >= 190) {
+    memHandi = 0;
+  }else if(userAvg < 190 && userAvg >= 180) {
+    memHandi = (200 - userAvg) * 0.6
+  }else if(userAvg < 180 && userAvg >= 170) {
+    memHandi = (200 - userAvg) * 0.8
+  }else if(userAvg < 170 && userAvg >= 160) {
+    memHandi = (200 - userAvg) * 0.9
+  }else if(userAvg < 160) {
+    memHandi = 200 - userAvg
+  }
+  const game1Plus = game1 + memHandi
+  const game2Plus = game2 + memHandi
+  const game3Plus = game3 + memHandi
+  const userTotal = game1Plus + game2Plus + game3Plus
+  connection.query(`update 하이게임 set game1 = ${game1}, game1Origin = ${game1Plus}, game2Origin = ${game2Plus}, game3Origin = ${game3Plus}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
     if(error){
       console.log(error)
     }
