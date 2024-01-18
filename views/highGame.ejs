@@ -110,9 +110,9 @@
                             <td><%= row.userName %></td>
                             <td><%= row.userAvg %></td>
                             <td><%= row.userHandi %></td>
-                            <td <% if (row.game1 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1Origin %></td>
-                            <td <% if (row.game2 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2Origin %></td>
-                            <td <% if (row.game3 >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3Origin %></td>
+                            <td <% if (row.game1Origin >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game1Origin %></td>
+                            <td <% if (row.game2Origin >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game2Origin %></td>
+                            <td <% if (row.game3Origin >= 200) { %>style="color: red; font-weight: bold;"<% } %>><%= row.game3Origin %></td>
                             <td <% if (row.userTotal >= 700) { %>style="color: red; font-weight: bold;"<% } %>><%= row.userTotal %></td>
                             <% rank.forEach((rows) => { %>
                                 <% if (rows.userName === row.userName) { %>

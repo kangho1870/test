@@ -792,7 +792,7 @@ app.post('/saveHighGame', (req, res) => {
   let game1Plus = game1 + memHandi
   let game2Plus = game2 + memHandi
   let game3Plus = game3 + memHandi
-  const userTotal = game1Plus + game2Plus + game3Plus
+  
   if (game1Plus >= 300) {
     game1Plus = 300;
   }
@@ -804,6 +804,16 @@ app.post('/saveHighGame', (req, res) => {
   if (game3Plus >= 300) {
     game3Plus = 300;
   }
+  if(game1 == 0) {
+    game1Plus = 0
+  }
+  if(game2 == 0) {
+    game2Plus = 0;
+  }
+  if(game3 == 0) {
+    game3Plus = 0;
+  }
+  let userTotal = game1Plus + game2Plus + game3Plus
   connection.query(`update 하이게임 set game1 = ${game1}, game1Origin = ${game1Plus}, game2Origin = ${game2Plus}, game3Origin = ${game3Plus}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
     if(error){
       console.log(error)
