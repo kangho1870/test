@@ -619,11 +619,11 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
                 if(error){
                   console.log(error)
                 }
-                connection.query(`select * from 하이게임 order by userAvg desc;`, (error, member) =>{
+                connection.query(`select * from 하이게임 order by userAvg desc;`, (error, memberScore) =>{
                   if(error){
                     console.log(error)
                   }
-                  res.render('highGame', {highGame, member, highGame8, highGameFinal, userName, rank, member})
+                  res.render('highGame', {highGame, member, highGame8, highGameFinal, userName, rank, memberScore})
                 })
               })
             })
@@ -775,6 +775,7 @@ app.post('/saveHighGame', (req, res) => {
   const userAvg = req.body.userAvg
   
   const memId = req.body.userId
+  console.log(memId)
   const gameName = '하이게임'
   let memHandi = 0;
   if(userAvg >= 190) {
