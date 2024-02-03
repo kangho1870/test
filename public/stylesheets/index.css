@@ -161,6 +161,41 @@ td {
     width: 95%; /* 창의 너비에 따라 조정할 수 있습니다. */
     max-width: 400px; /* 버튼의 최대 너비를 지정합니다. */
     position: absolute;
+    bottom: 7%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    &:hover,
+    &:focus {
+      color: #171616;
+      font-weight: bold;
+      outline: 0;
+    }
+}
+.btn4 {
+    box-sizing: border-box;
+    appearance: none;
+    background-color: transparent;
+    border: 2px solid rgb(103, 100, 100);
+    border-radius: 0.6em;
+    color: rgb(12, 1, 1);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 20px;
+    padding: 1.2em 2.8em;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    width: 100%; /* 창의 너비에 따라 조정할 수 있습니다. */
+    max-width: 400px; /* 버튼의 최대 너비를 지정합니다. */
+    position: absolute;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -172,7 +207,6 @@ td {
       outline: 0;
     }
 }
-
 #show {
     transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out;
     &:hover {
@@ -498,6 +532,12 @@ td {
         bottom: unset;
         margin-left: 0%;
     }
+    .btn4 {
+        position: relative;
+        bottom: unset;
+        margin-top: 30%;
+        margin-left: 0%;
+    }
     .nav-title {
         text-align: center;
         font-size: 10px;
@@ -560,15 +600,7 @@ td {
     .notice {
         margin-left: 10px;
     }
-    .high16 table tr:nth-child(-n+16) td {
-        background-color: rgb(227, 161, 161);
-    }
-    .high8 table tr:nth-child(-n+8) td {
-        background-color: rgb(227, 161, 161);
-    }
-    .final table tr:nth-child(-n+3) td {
-        background-color: rgb(227, 161, 161);
-    }
+    
 }
 @media (min-width: 601px) {
     /* 데스크톱 화면에 대한 스타일 지정 */

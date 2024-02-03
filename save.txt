@@ -16,110 +16,50 @@ SQL 수정
 2. 에버 판게임
 
 
-let game1PM = 0;
-  let game2PM = 0;
-  let game3PM = 0;
-  let game4PM = 0;
 
-  if(game1 !== 0 && game2 == 0 && game3 == 0 && game4 == 0) {
-    game1PM = parseInt(game1) - parseInt(memAvg)
-  }else if(game1 == 0 && game2 !== 0 && game3 == 0 && game4 == 0) {
-    game1PM = parseInt(db1Game) - parseInt(memAvg)
-    game2PM = parseInt(game2) - parseInt(memAvg)
-  }else if(game1 == 0 && game2 == 0 && game3 !== 0 && game4 == 0) {
-    game1PM = parseInt(db1Game) - parseInt(memAvg)
-    game2PM = parseInt(db2Game) - parseInt(memAvg)
-    game3PM = parseInt(game3) - parseInt(memAvg)
-  }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
-    game1PM = parseInt(db1Game) - parseInt(memAvg)
-    game2PM = parseInt(db2Game) - parseInt(memAvg)
-    game3PM = parseInt(db3Game) - parseInt(memAvg)
-    game4PM = parseInt(game4) - parseInt(memAvg)
-  }
-   
-  let userThisAvg = 0
-  if(game1 !== 0 && game2 == 0 && game3 == 0 && game4 == 0) {
-    userThisAvg = (parseInt(game1) / 1).toFixed(2).toString();
-  }else if(game1 == 0 && game2 !== 0 && game3 == 0 && game4 == 0) {
-    userThisAvg = ((parseInt(db1Game) + parseInt(game2)) / 2).toFixed(2).toString();
-  }else if(game1 == 0 && game2 == 0 && game3 !== 0 && game4 == 0) {
-    userThisAvg = ((parseInt(db1Game) + parseInt(db2Game) + parseInt(game3)) / 3).toFixed(2).toString();
-  }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
-    userThisAvg = ((parseInt(db1Game) + parseInt(db2Game) + parseInt(db3Game) + parseInt(game4)) / 4).toFixed(2).toString();
-  }
+금요 판게임
 
-  let userTotal = 0;
-  if(game1 !== 0 && game2 == 0 && game3 == 0 && game4 == 0) {
-    userTotal = parseInt(game1)
-  }else if(game1 == 0 && game2 !== 0 && game3 == 0 && game4 == 0) {
-    userTotal =  parseInt(db1Game) + parseInt(game2)
-  }else if(game1 == 0 && game2 == 0 && game3 !== 0 && game4 == 0) {
-    userTotal = parseInt(db1Game) + parseInt(db2Game) + parseInt(game3)
-  }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
-    userTotal = parseInt(db1Game) + parseInt(db2Game) + parseInt(db3Game) + parseInt(game4)
-  }
-  let userHigh = Math.max(parseInt(game1), parseInt(game2), parseInt(game3), parseInt(game4));
-  if(game1 !== 0 && game2 == 0 && game3 == 0 && game4 == 0) {
-    userHigh = Math.max(parseInt(game1), parseInt(db2Game), parseInt(db3Game), parseInt(db4Game));
-  }else if(game1 == 0 && game2 !== 0 && game3 == 0 && game4 == 0) {
-    userHigh =  Math.max(parseInt(db1Game), parseInt(game2), parseInt(db3Game), parseInt(db4Game));
-  }else if(game1 == 0 && game2 == 0 && game3 !== 0 && game4 == 0) {
-    userHigh = Math.max(parseInt(db1Game), parseInt(db2Game), parseInt(game3), parseInt(db4Game));
-  }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
-    userHigh = Math.max(parseInt(db1Game), parseInt(db2Game), parseInt(db3Game), parseInt(game4));
-  }
-  let userLow = Math.min(parseInt(game1), parseInt(game2), parseInt(game3), parseInt(game4));
-  if(game1 !== 0 && game2 == 0 && game3 == 0 && game4 == 0) {
-    userLow = Math.min(parseInt(game1));
-  }else if(game1 == 0 && game2 !== 0 && game3 == 0 && game4 == 0) {
-    userLow =  Math.min(parseInt(db1Game), parseInt(game2));
-  }else if(game1 == 0 && game2 == 0 && game3 !== 0 && game4 == 0) {
-    userLow = Math.min(parseInt(db1Game), parseInt(db2Game), parseInt(game3));
-  }else if(game1 == 0 && game2 == 0 && game3 == 0 && game4 !== 0) {
-    userLow = Math.min(parseInt(db1Game), parseInt(db2Game), parseInt(db3Game), parseInt(game4));
-  }
+점수 테이블
 
-  }else if(parseInt(game1) == 0 && parseInt(game2) !== 0 && parseInt(game3) == 0 && parseInt(game4) == 0){
-    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${game2}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
-        if (error) {
-            console.error('MySQL 데이터 삽입 오류:', error);
-            res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        }
-      });
-  }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) !== 0 && parseInt(game4) == 0){
-    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${game3}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
-        if (error) {
-            console.error('MySQL 데이터 삽입 오류:', error);
-            res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        };
-      });
-  }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) == 0 && parseInt(game4) !== 0){
-    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${game4}, 4Game_P_M = ${game4PM}, userThisAvg = ${userThisAvg}, userTotal = ${userTotal}, userHigh = ${userHigh}, userLow = ${userLow}  WHERE userName = '${loggedName}'`, (error, result, fields) => {
-        if (error) {
-            console.error('MySQL 데이터 삽입 오류:', error);
-            res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-      } 
-    });
-  }else if (parseInt(game1) == 0 && parseInt(game2) == 0 && parseInt(game3) == 0 && parseInt(game4) == 0){
-    game1PM = parseInt(db1Game) - parseInt(memAvg);
-    game2PM = parseInt(db2Game) - parseInt(memAvg);
-    game3PM = parseInt(db3Game) - parseInt(memAvg);
-    game4PM = parseInt(db4Game) - parseInt(memAvg);
-    userTotal = parseInt(db1Game) + parseInt(db2Game) + parseInt(db3Game) + parseInt(db4Game)
-    
-    if(parseInt(db1Game) == 0) {
-      game1PM = 0;
-    }else if(parseInt(db2Game) == 0) {
-      game2PM = 0;
-    }else if(parseInt(db3Game) == 0) {
-      game3PM = 0;
-    }else if(parseInt(db4Game) == 0) {
-      game4PM = 0;
-    }
-    connection.query(`UPDATE ${gameName} SET 1Game = ${db1Game}, 1Game_P_M = ${game1PM}, 2Game = ${db2Game}, 2Game_P_M = ${game2PM}, 3Game = ${db3Game}, 3Game_P_M = ${game3PM}, 4Game = ${db4Game}, 4Game_P_M = ${game4PM}, userTotal = ${userTotal} WHERE userName = '${loggedName}'`, (error, result, fields) => {
-        if (error) {
-            console.error('MySQL 데이터 삽입 오류:', error);
-            res.status(500).json({ error: 'MySQL 데이터 삽입 오류' });
-        }
-      });
-  }
+팀 테이블
+
+1군 판게임 테이블
+
+에버 판게임
+--------------
+팀 별 점수 및 등수 테이블
+
+OTT
+
+넷플릭스
+
+디즈니
+
+웨이브
+
+티빙
+
+공통 -
+카테고리
+    한국
+    미국
+    아시아
+    애니메이션
+    영화
+    드라마
+    버라이어티/예능
+
+재생 -
+정지 -
+
+
+최상위 컨트롤러
+        on
+        off
+        start
+
+        카테고리
+        korea
+        usa
+        punny
+        

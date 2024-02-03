@@ -29,7 +29,8 @@
                 <input type="submit" value="reset">
             </form>
         </div>
-        <% for(var i = 0; i < 7; i++) { %>
+        <% for(var i = 0; i < 15; i++) { %>
+            <!-- 팀 개수 조정 -->
             <table id="team<%= [i + 1] %>">
                 <tr>
                     <% var teamSize = teams["teamScore" + (i + 1)].length + 1; %>
@@ -320,7 +321,6 @@
             </div>
         </div>  
             <button id="show" class="btn3">점수 입력</button>
-            <button class="btn4">게임 저장</button>
             <div class="background">
                 <div class="window">
                     <div class="popup">
@@ -370,8 +370,11 @@
                             <% }); %>
                         </form>
                     </div>
+                <div>
+                    <div></div>
                 </div>
             </div>
+        </div>
 
     <script src="/js/test.js"></script>
 </body>

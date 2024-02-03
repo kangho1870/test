@@ -175,47 +175,6 @@
                 </div>
             </div>
         </p>
-        <button id="show" class="btn3">점수 입력</button>
-        <div class="background">
-            <div class="window">
-                <div class="popup">
-                    <% userName.forEach((row, index) =>{ %>
-                    <form method="post" action="/saveHighGame" id="input-score" onsubmit="return validateScores()">
-                        <div class="contact_form">
-                            <div>
-                                <input id="contact_name" value="<%= row.game1 || 0 %>" name="Game1" type="text" max="300">
-                                <label for="contact_name">1Game</label>
-                            </div>
-                        </div>
-                        <div class="contact_form">
-                            <div>
-                                <input id="contact_name" value="<%= row.game2 || 0 %>" name="Game2" type="text" max="300">
-                                <label for="contact_name">2Game</label>
-                            </div>
-                        </div>
-                        <div class="contact_form">
-                            <div>
-                                <input id="contact_name" value="<%= row.game3 || 0 %>" name="Game3" type="text" max="300">
-                                <label for="contact_name">3Game</label>
-                            </div>
-                        </div>
-                        <p>
-                            <td><input type="submit" value="점수 입력" id="submit" class="btn"></td> 
-                        </p>
-                            <input type="hidden" name="userName" value="<%= row.userName %>">
-                            <input type="hidden" name="userAvg" value="<%= row.userAvg %>">
-                        <% member.forEach((row) =>{ %>
-                            <input type="hidden" name="userId" value="<%= row.memid %>">
-                        <% }) %>
-                    <% }) %>
-                    </form>
-                        <p>
-                            <button id="close" class="btn2">닫기</button>
-                        </p>
-                </div>
-            </div>
-        </div>
-    </div>
     <script src="/js/highGame.js"></script>
 </body>
 </html>
