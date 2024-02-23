@@ -566,20 +566,20 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
     memHandi = 200 - memAvg
   }
 
-  connection.query(`select userName from 하이게임 order by userTotal desc limit 16;`, (error, results) =>{
+  connection.query(`select userName from 하이게임8 order by userTotal desc limit 8;`, (error, results) =>{
     if(error) {
       console.log(error)
     }
     results.forEach((row) =>{
       if(row.userName == memName) {
-        connection.query(`select userName from 하이게임8 where userName = '${memName}'`, (error, result) =>{
+        connection.query(`select userName from 하이게임결승 where userName = '${memName}'`, (error, result) =>{
           if(error) {
             console.log(error)
           }
           if(result.length > 0) {
             
           }else {
-            connection.query(`insert into 하이게임8 set userName = '${memName}', userAvg = ${memAvg}, userHandi = ${memHandi}`, (error, result) =>{
+            connection.query(`insert into 하이게임결승 set userName = '${memName}', userAvg = ${memAvg}, userHandi = ${memHandi}`, (error, result) =>{
               if(error) {
                 console.log(error)
               }
@@ -629,7 +629,7 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
             if(error){
               console.log(error)
             }
-            connection.query(`select * from 하이게임8 where userName = '${memName}'`, (error, userName) =>{
+            connection.query(`select * from 하이게임결승 where userName = '${memName}'`, (error, userName) =>{
               if(error){
                 console.log(error)
               }
@@ -676,7 +676,9 @@ app.get('/eventGame/:gameName/:memId', (req, res) =>{
     })
   })
 })
-
+app.get('/recordroom', (req, res) => {
+  res.render('recordroom')
+})
 app.post('/saveDb', (req, res) => {
   const gameName = req.body.gameName
   const loggedName = req.body.sessionName;
@@ -859,13 +861,13 @@ app.post('/saveHighGame', (req, res) => {
   }
   let userTotal = game1Plus + game2Plus + game3Plus
   const redirectPath = `/eventGame/${gameName}/${memId}?eventName=${userName}&eventAvg=${userAvg}`
-  connection.query(`select userName from 하이게임 order by userTotal desc limit 16;`, (error, result) => {
+  connection.query(`select userName from 하이게임8 order by userTotal desc limit 8;`, (error, result) => {
     if(error) {
       console.log
     }
     result.forEach((row) => {
       if(row.userName == userName) {
-        connection.query(`update 하이게임8 set game1 = ${game1}, game1Origin = ${game1Plus}, game2Origin = ${game2Plus}, game3Origin = ${game3Plus}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
+        connection.query(`update 하이게임결승 set game1 = ${game1}, game1Origin = ${game1Plus}, game2Origin = ${game2Plus}, game3Origin = ${game3Plus}, game2 = ${game2}, game3 = ${game3}, userTotal = ${userTotal} where userName = '${userName}'`, (error, result) =>{
           if(error){
             console.log(error)
           }

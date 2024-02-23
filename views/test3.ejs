@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+    <title>Allcover</title>
+</head>
+<body>
+    <div class="nav-title">
+        <h1><%= gameName %></h1>
+    </div>
+    <div class="scoreboardSection">
+        <li>
+            <button class="section-btn" id="userScore">개인 점수표</button>
+            <button class="section-btn" id="teamScore">팀 점수표</button>
+            <button class="section-btn" id="Ceremony">시상 표 </button>       
+        </li>
+    </div>
+    <div class="teamScore" style="display: none;">
+        <% for(var i = 0; i < 7; i++) { %>
+            <table id="team<%= [i + 1] %>">
+                <tr>
+                    <% var teamSize = teams["teamScore" + (i + 1)].length + 1; %>
+                    <th rowspan="<%= teamSize %>">Team<%= [i + 1] %></th>
+                    <th>No.</th>
+                    <th>이름</th>
+                    <th>에버</th>
+                    <th>1Game</th>
+                    <th>1Game(+/-)</th>
+                    <th>2Game</th>
+                    <th>2Game(+/-)</th>
+                    <th>3Game</th>
+                    <th>3Game(+/-)</th>
+                    <th>4Game</th>
+                    <th>4Game(+/-)</th>
+                </tr>
+                <% if (teams["teamScore" + (i + 1)]) { %>
+                    <% teams["teamScore" + (i + 1)].forEach((row, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td class="game-cell" id="1Game"><%= row['1Game'] %></td>
+                            <td class="game_P_M-cell"><%= row['1Game_P_M'] %></td>
+                            <td class="game-cell" id="2Game"><%= row['2Game'] %></td>
+                            <td class="game_P_M-cell"><%= row['2Game_P_M'] %></td>
+                            <td class="game-cell" id="3Game"><%= row['3Game'] %></td>
+                            <td class="game_P_M-cell"><%= row['3Game_P_M'] %></td>
+                            <td class="game-cell" id="4Game"><%= row['4Game'] %></td>
+                            <td class="game_P_M-cell"><%= row['4Game_P_M'] %></td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+                <tr>
+                    <th colspan="4">합계</th>
+                    <% if (teamScores["team" + (i + 1)]) { %>
+                        <% teamScores["team" + (i + 1)].forEach((row, index) => { %>
+                            <td class="game-cell"><%= row.sum_game1 %></td>
+                            <td class="game_P_M-cell"><%= row.sum_1game_p_m %></td>
+                            <td class="game-cell"><%= row.sum_game2 %></td>
+                            <td class="game_P_M-cell"><%= row.sum_2game_p_m %></td>
+                            <td class="game-cell"><%= row.sum_game3 %></td>
+                            <td class="game_P_M-cell"><%= row.sum_3game_p_m %></td>
+                            <td class="game-cell"><%= row.sum_game4 %></td>
+                            <td class="game_P_M-cell"><%= row.sum_4game_p_m %></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr>
+                    <th colspan="4">순위</th>
+                    <% teamRank.forEach((row) =>{ %>
+                        <% if(row.teamNumber == [i + 1]) {%>
+                        <td colspan="2"><%= row.ranking_1Game_P_M %>등</td>
+                        <td colspan="2"><%= row.ranking_2Game_P_M %>등</td>
+                        <td colspan="2"><%= row.ranking_3Game_P_M %>등</td>
+                        <td colspan="2"><%= row.ranking_4Game_P_M %>등</td>
+                        <% } %>
+                    <% }) %>
+                </tr>
+            </table>
+        <% } %>
+    </div>
+    <div class="table-center" style="overflow-x: auto; overflow-y: auto;">
+            <table class="user-table">
+                <tr class="main-tr">
+                    <th>순 위</th>
+                    <th>이 름</th>
+                    <th>에 버</th>
+                    <th class="origin_game">1Game</th>
+                    <th>1G(+/-)</th>
+                    <th class="origin_game">2Game</th>
+                    <th>2G(+/-)</th>
+                    <th class="origin_game">3Game</th>
+                    <th>3G(+/-)</th>
+                    <th class="origin_game">4Game</th>
+                    <th>4G(+/-)</th>
+                    <th>총 핀</th>
+                    <th>핀 차이</th>
+                    <th>평 균</th>
+                    <th>최고점수</th>
+                    <th>최저점수</th>
+                </tr>
+                <% results.forEach((row, index) => { %>
+                <tr class="<%= row.userName %>" id="<%= row.userName %>" value="<%= row.userName %>">
+                    <td><%= index + 1 %></td>
+                    <td><%= row.userName %></td>
+                    <td><%= row.userAvg %></td>
+                    <td class="game-cell" id="Game1<%= row.userName %>"><%= row['1Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['1Game_P_M'] %></td>
+                    <td class="game-cell" id="Game2<%= row.userName %>"><%= row['2Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['2Game_P_M'] %></td>
+                    <td class="game-cell" id="Game3<%= row.userName %>"><%= row['3Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['3Game_P_M'] %></td>
+                    <td class="game-cell" id="Game4<%= row.userName %>"><%= row['4Game'] %></td>
+                    <td class="game_P_M-cell"><%= row['4Game_P_M'] %></td>
+                    <td class="total"><%= row.userTotal %></td>
+                    <% userRank.forEach((rows) => { %>
+                        <% if (rows.userName === row.userName) { %>
+                            <td><%= rows.pinDifference %></td>
+                        <% } %>
+                    <% }) %>
+                    <td class="userThisAvg"><%= row.userThisAvg %></td>
+                    <td><%= row.userHigh %></td>
+                    <td><%= row.userLow %></td>
+                </tr>
+                <% }); %>
+            </table>
+        </div>
+        <div class="ceremony" style="display: none;">
+            <p>
+            <div class="game_setting">
+                <form method="post" action="/gameSetting">
+                    <input type="hidden" name="gameSettingGameName" value="<%= gameName %>">
+                    <input type="hidden" name="memId" value="<%= memid %>">
+                    <input type="hidden" name="memGender" value="<%= memid %>">
+                    <% userName.forEach((row) =>{ %>
+                        <input type="hidden" name="gameSettingUserName" value="<%= row.userName %>">
+                    <% }) %>
+                    <table>
+                        <tr>
+                            <th rowspan="2">No.</th>
+                            <th rowspan="2">이름</th>
+                            <th rowspan="2">에버</th>
+                            <th>군 설정</th>
+                            <th rowspan="2">1군 판게임</th>
+                            <th rowspan="2">에버 판게임</th>
+                        </tr>
+                        <tr>
+                            <th>1군 2군 3군 4군</th>
+                        </tr>
+                        <% settings.forEach((row, index) => { %>
+                        <tr>
+                            <th><%= index + 1 %></th>
+                            <td><%= row.userName %></td>
+                            <td><%= row.userAvg %></td>
+                            <td>
+                                <input type="hidden" name="gameSettings[<%= index %>][userName]" value="<%= row.userName %>">
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="1" <%= row.grade === 1 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="2" <%= row.grade === 2 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="3" <%= row.grade === 3 ? 'checked' : '' %> disabled>
+                                <input type="radio" name="gameSettings[<%= index %>][grade]" value="4" <%= row.grade === 4 ? 'checked' : '' %> disabled>
+                            </td>
+                            <td><input type="checkbox" name="gameSettings[<%= index %>][grade1Game]" value="1" <%= row.grade1_side === 1 ? 'checked' : '' %>></td>
+                            <td><input type="checkbox" name="gameSettings[<%= index %>][avgGame]" value="1" <%= row.avg_side === 1 ? 'checked' : '' %>></td>
+                        </tr>
+                        <% }) %>
+                    </table>
+                </form>
+            </div>
+            </p>
+            <div class="total_ceremony">
+                <table>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">총핀</th>
+                        <td colspan="<%= team1st.length %>"><%= pin1st[0]?.userName %></td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">슈퍼 히어로</th>
+                        <td colspan="<%= team1st.length %>"><%= superHero[0]?.userName %></td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">1군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade1_1st && grade1st.grade1_1st.length > 0) { %>
+                                <%= grade1st.grade1_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">2군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade2_1st && grade1st.grade2_1st.length > 0) { %>
+                                <%= grade1st.grade2_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">3군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade3_1st && grade1st.grade3_1st.length > 0) { %>
+                                <%= grade1st.grade3_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">4군 1등</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (grade1st.grade4_1st && grade1st.grade4_1st.length > 0) { %>
+                                <%= grade1st.grade4_1st %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">남자 하이</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (manHigh && manHigh.length > 0) { %>
+                                <%= manHigh %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">여자 하이</th>
+                        <td colspan="<%= team1st.length %>">
+                            <% if (womanHigh && womanHigh.length > 0) { %>
+                                <%= womanHigh %>
+                            <% } else { %>
+                                
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="<%= team1st.length %>">팀 1등</th>
+                        <% team1st.forEach(function(member) { %>
+                            <td><%= member.userName %></td>
+                        <% }) %>
+                    </tr>
+                </table>
+            </div>
+            <p>
+            <div class="grade1_side">
+                <table>
+                    <tr>
+                        <th colspan="5">1군 판게임</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>4Game</th>
+                    </tr>
+                    <% for (let i = 0; i < 5; i++) { %>
+                        <tr>
+                            <th><%= i + 1 %>등</th>
+                            <td><%= grade1_side.grade1_side1[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side2[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side3[i]?.userName %></td>
+                            <td><%= grade1_side.grade1_side4[i]?.userName %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+            </p>
+            <div class="avg_side">
+                <table>
+                    <tr>
+                        <th colspan="8">에버 판게임</th>
+                    </tr>
+                    <tr>
+                        <th>순위</th>
+                        <th>1Game</th>
+                        <th>2Game</th>
+                        <th>3Game</th>
+                        <th>4Game</th>
+                    </tr>
+                    <% for (let i = 0; i < 7; i++) { %>
+                        <tr>
+                            <th><%= i + 1 %>등</th>
+                            <td><%= avgGame.avgGame1[i]?.userName %></td>
+                            <td><%= avgGame.avgGame2[i]?.userName %></td>
+                            <td><%= avgGame.avgGame3[i]?.userName %></td>
+                            <td><%= avgGame.avgGame4[i]?.userName %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+        </div>  
+
+<script src="/js/test.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Allcover</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/index.css" type='text/css'>
+  </head>
+  <body>
+    <div class="container">
+      <div class="game-table">
+        <div class="title">진행중인 게임</div>
+        <% filteredTables.forEach((rows, indexs) => { %>
+          <% result.forEach((row, index) => { %>
+            <form action="/scoreboard/<%= row.memid %>/<%= row.gender %>" method="get" id="joinForm-<%= indexs %>">
+              <button type="submit" class="game-btn" data-table-name="<%= rows.Tables_in_allcover %>">
+                <span><%= rows.Tables_in_allcover %></span>
+              </button>
+              <div class="layout"></div>
+              <input type="hidden" value="<%= rows.Tables_in_allcover %>" name="joinGame">
+              <input type="hidden" value="<%= row.memName %>" name="memName">
+              <input type="hidden" value="<%= row.memAvg %>" name="memAvg">
+              <input type="hidden" value="<%= row.gender %>" name="memGender">
+              <input type="hidden" value="<%= row.memid %>" name="memId">
+            </form>
+          <% }) %>
+        <% }); %>
+          <div class="eventTable">
+            <div class="title">이벤트 게임</div>
+              <% result.forEach((row, index) => { %>
+                  <form action="/eventGame/<%= highGame %>/<%= row.memid %>" method="get" id="eventJoinForm">
+                    <button type="submit" class="game-btn2" name="<%= highGame %>">
+                      <span><%= highGame %></span>
+                    </button>
+                    <input type="hidden" value="<%= row.memName %>" name="eventName">
+                    <input type="hidden" value="<%= row.memAvg %>" name="eventAvg">
+                    <input type="hidden" value="<%= row.gender %>" name="eventGender">
+                    <input type="hidden" value="<%= row.memid %>" name="eventId">
+                  </form>
+              <% }) %>
+          </div>
+      </div>
+    
+    
+      <div class="createGame">
+        <div class="title">게임 생성</div>
+        <form action="/createGame" method="post">
+          <input type="text" name="gameName" class="gameName" placeholder="Game Name">
+          
+          <% result.forEach((row, index) => { %>
+            <input type="hidden" name="userName" value="<%= row.memName %>" >
+            <input type="hidden" name="userAvg" value="<%= row.memAvg %>" >
+            <input type="hidden" name="userId" value="<%= row.memid %>" >
+            <input type="hidden" value="<%= row.gender %>" name="memGender">
+            <% }); %>
+            <p>
+            <input type="submit" value="생성" class="game-btn2">
+            </p>
+            <div class="check">
+            <p>게임 생성 시 체크사항</p>
+            <p>1. 게임이름은 숫자로 시작할 수 없습니다.</p>
+            <p>2. 게임이름 사이의 공백을 허용하지 않습니다.</p>
+            <p>3. 게임이름에는 특수문자를 포함할 수 없습니다.</p>
+            <p>진행중인 게임목록에서</p>
+            <p>참가하고 싶은 게임의 버튼을 클릭하세요!</p>
+          </div>
+          </form>
+      </div>
+    </div>
+      
+      </body>
+      <script src="/js/gameselect.js"></script>
+    
+  </body>
+</html>
